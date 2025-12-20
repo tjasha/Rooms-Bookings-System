@@ -19,13 +19,17 @@ func routes(app *config.AppConfig) http.Handler {
 
 	//we can easily add some middleware that is available in chi
 	//we are adding middleware that is recovering application if there was fatal error
-	mux.Use(middleware.Recoverer) 
+	mux.Use(middleware.Recoverer)
 	// we are calling middleware here
 	mux.Use(NoSerf)
 	mux.Use(SessionLoad)
 
 	mux.Get("/", handlers.Repo.Home)
 	mux.Get("/about", handlers.Repo.About)
+
+	//where all our images are saved
+	fileServer := http.FileServer(http.Dir("./static/"))
+	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
 
 	return mux
 }
