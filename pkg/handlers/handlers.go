@@ -10,10 +10,10 @@ import (
 
 //Repository pattern:
 
-//repository used by handlers
+// repository used by handlers
 var Repo *Repository
 
-//repository type
+// repository type
 type Repository struct {
 	App *config.AppConfig
 }
@@ -26,23 +26,22 @@ func NewRepo(a *config.AppConfig) *Repository {
 }
 
 // sets repository for handlers
-func NewHandlers(r *Repository){
+func NewHandlers(r *Repository) {
 	Repo = r
 }
 
-
-//we add receiver(m *Repository) to all handlers - this give them an access to the application variables
-//Home page handler
+// we add receiver(m *Repository) to all handlers - this give them an access to the application variables
+// Home page handler
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 
 	// to test sessions we save ip address of the user coming to the home page in the session
 	remoteIP := r.RemoteAddr
 	m.App.Session.Put(r.Context(), "remote_ip", remoteIP)
 
-	render.RenderTemplate(w, "home.page.tmpl", &models.TemplateData{}) 
-} 
+	render.RenderTemplate(w, "home.page.tmpl", &models.TemplateData{})
+}
 
-//About page handler
+// About page handler
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 
 	//some logic
@@ -55,6 +54,6 @@ func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 
 	render.RenderTemplate(w, "about.page.tmpl", &models.TemplateData{
 		StringMap: stringMap, //we add map that we created to the template
-	}) 
+	})
 
-} 
+}
