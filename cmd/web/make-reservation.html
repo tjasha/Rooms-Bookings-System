@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Reservation</title>
+    <title>Contacts</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
           integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
@@ -27,7 +27,6 @@
 
     </style>
 </head>
-
 
 <body>
 <!--Navigation bar -->
@@ -71,38 +70,36 @@
 <!--Main content-->
 <div class="container">
     <div class="row">
-        <div class="col-md-3"></div>
-        <div class="col-md-6">
-            <h1>Search for availability</h1>
-            <form action="reservation.html" method="GET">
-                <div class="form-row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="start_date">Starting date</label>
-                            <input type="date" class="form-control" id="start_date" name="start_date"
-                                   aria-describedby="startDateHelp" required>
-                            <div id="startDateHelp" class="form-text text-muted">Enter your starting date in the format
-                                YYY-MM-DD.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="end_date">Ending date</label>
-                            <input type="date" class="form-control" id="end_date" name="end_date"
-                                   aria-describedby="endDateHelp" required>
-                            <div id="endDateHelp" class="form-text text-muted">Enter your ending date in the format
-                                YYY-MM-DD.
-                            </div>
-                        </div>
-                    </div>
+        <div class="col">
+            <h1>Make reservation</h1>
+            <form method="POST" action="" class="needs-validation" novalidate>
+
+                <div class="form-group mt-5">
+                    <label for="first_name">First Name: </label>
+                    <input type="text" name="first_name" id="first_name" class="form-control" autocomplete="off"/>
                 </div>
-                <button type="submit" class="btn btn-primary">Search availability</button>
+
+                <div class="form-group mt-5">
+                    <label for="last_name">Last Name: </label>
+                    <input type="text" name="last_name" id="last_name" required class="form-control"
+                           autocomplete="off"/>
+                </div>
+
+                <div class="form-group mt-5">
+                    <label for="email">Email: </label>
+                    <input type="email" name="email" id="email" class="form-control" required autocomplete="off">
+                </div>
+
+                <div class="form-group mt-5">
+                    <label for="phone">Phone: </label>
+                    <input type="text" name="phone" id="phone" class="form-control" required autocomplete="off">
+                </div>
+
+                <input type="submit" class="btn btn-primary" value="Make Reservation">
             </form>
         </div>
     </div>
 </div>
-
 
 <!--Footer-->
 <div class="row my-footer">
