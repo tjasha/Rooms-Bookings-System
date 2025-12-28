@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
           integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
 
+    <!-- Datepicker -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker-bs4.min.css">
+
     <!--Style-->
     <style>
         .my-footer {
@@ -81,28 +85,49 @@
 
             <!--form-->
             <form action="reservation.html" method="GET" novalidate class="needs-validation">
+                <!--                <div class="form-row">-->
+                <!--                    <div class="col">-->
+                <!--                        <div class="form-group">-->
+                <!--                            <label for="start_date">Starting date</label>-->
+                <!--                            <input type="date" class="form-control" id="start_date" name="start_date"-->
+                <!--                                   aria-describedby="startDateHelp" required>-->
+                <!--                            <div id="startDateHelp" class="form-text text-muted">Enter your starting date in the format-->
+                <!--                                YYY-MM-DD.-->
+                <!--                            </div>-->
+                <!--                        </div>-->
+                <!--                    </div>-->
+                <!--                    <div class="col">-->
+                <!--                        <div class="form-group">-->
+                <!--                            <label for="end_date">Ending date</label>-->
+                <!--                            <input type="date" class="form-control" id="end_date" name="end_date"-->
+                <!--                                   aria-describedby="endDateHelp" required>-->
+                <!--                            <div id="endDateHelp" class="form-text text-muted">Enter your ending date in the format-->
+                <!--                                YYY-MM-DD.-->
+                <!--                            </div>-->
+                <!--                        </div>-->
+                <!--                    </div>-->
+                <!--                </div>-->
+
+
                 <div class="form-row">
                     <div class="col">
-                        <div class="form-group">
-                            <label for="start_date">Starting date</label>
-                            <input type="date" class="form-control" id="start_date" name="start_date"
-                                   aria-describedby="startDateHelp" required>
-                            <div id="startDateHelp" class="form-text text-muted">Enter your starting date in the format
-                                YYY-MM-DD.
+
+
+                        <div class="form-row" id="reservation-dates">
+                            <div class="col">
+                                <label>
+                                    <input class="form-control" type="text" name="start" placeholder="Arrival" required>
+                                </label>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="end_date">Ending date</label>
-                            <input type="date" class="form-control" id="end_date" name="end_date"
-                                   aria-describedby="endDateHelp" required>
-                            <div id="endDateHelp" class="form-text text-muted">Enter your ending date in the format
-                                YYY-MM-DD.
+                            <div class="col">
+                                <label>
+                                    <input class="form-control" type="text" name="end" placeholder="Departure" required>
+                                </label>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <button type="submit" class="btn btn-primary">Search availability</button>
             </form>
         </div>
@@ -142,6 +167,7 @@
         integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
         crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js"></script>
 
 
 <script>
@@ -178,6 +204,12 @@
             myEl.classList.add("redText");
         }
     })
+
+
+    const elem = document.getElementById('reservation-dates');
+    const rangepicker = new DateRangePicker(elem, {
+        format: "dd-mm-yyyy",
+    });
 
 </script>
 
