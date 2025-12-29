@@ -17,29 +17,37 @@
     <!--Notie - notification alert-->
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
 
-    <!--Style-->
+    <!-- my local styles -->
+    <link rel="stylesheet" type="text/css" href="static/css/styles.css">
+
     <style>
-        .my-footer {
-            height: 5em;
-            background-color: #163b65;
-            margin-top: 1.5em;
-            padding: 1em;
-            color: #FFFFFF;
-            font-size: 80%;
+        p {
+            color: red;
         }
 
-        .room-image {
-            max-width: 50%;
+        /*refer by html*/
+        p {
+            color: green;
         }
 
-        .notie-container {
-            box-shadow: none;
+        .btn-outline-secondary {
+            color: green;
+            border-color: #6c757d;
         }
 
-        .datepicker {
-            z-index: 10000;
+        .paraClass {
+            font-size: 3em;
         }
 
+        /*refer by class*/
+        .secondClass {
+            color: darkred;
+        }
+
+        /*refer by id*/
+        #myParagraph {
+            text-decoration: underline;
+        }
     </style>
 </head>
 
@@ -112,6 +120,9 @@
     <div class="row">
         <div class="col">
             <p id="myParagraph"> This is some text</p>
+            <p class="paraClass secondClass"> This is some text</p>
+            <p class="paraClass"> This is some text</p>
+            <p class=""> This is some text</p>
             <p>
                 <button id="colorButton" class="btn btn-outline-secondary">Click me</button>
             </p>
