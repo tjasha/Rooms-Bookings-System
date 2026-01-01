@@ -11,7 +11,11 @@
             <h1>Search for availability</h1>
 
             <!--form-->
-            <form action="" method="GET" novalidate class="needs-validation">
+            <form action="/search-availability" method="POST" novalidate class="needs-validation">
+                <!-- this field is needed so that POST requests can be handled!
+                This field always have to be present, but it can be hidden.
+                This token is changed every time that you post the form - it makes it safe! -->
+                <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
                 <div class="form-row" id="reservation-dates">
                     <div class="col">
                         <label>
@@ -31,10 +35,6 @@
     </div>
     <div class="row">
         <div class="col">
-            <p id="myParagraph"> This is some text</p>
-            <p class="paraClass secondClass"> This is some text</p>
-            <p class="paraClass"> This is some text</p>
-            <p class=""> This is some text</p>
             <p>
                 <button id="colorButton" class="btn btn-outline-secondary">Click me</button>
             </p>

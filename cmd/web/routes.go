@@ -10,17 +10,13 @@ import (
 )
 
 func routes(app *config.AppConfig) http.Handler {
-	// mux := pat.New() // we use external package, we installed it with "go get github.com/bmizerany/pat" from root
-
-	// mux.Get("/", http.HandlerFunc(handlers.Repo.Home))
-	// mux.Get("/about", http.HandlerFunc(handlers.Repo.About))
 
 	mux := chi.NewRouter()
 
 	//we can easily add some middleware that is available in chi
 	//we are adding middleware that is recovering application if there was fatal error
 	mux.Use(middleware.Recoverer)
-	// we are calling middleware here
+	// we are calling middleware here - this is security protection! don't remove it!
 	mux.Use(NoSerf)
 	mux.Use(SessionLoad)
 
@@ -30,6 +26,8 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Get("/generals-quarters", handlers.Repo.Generals)
 	mux.Get("/majors-suite", handlers.Repo.Majors)
 	mux.Get("/search-availability", handlers.Repo.Availability)
+	mux.Post("/search-availability", handlers.Repo.PostAvailability)
+
 	mux.Get("/contact", handlers.Repo.Contact)
 
 	mux.Get("/make-reservation", handlers.Repo.Reservation)
