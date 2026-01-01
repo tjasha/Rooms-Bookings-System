@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/tjasha/Rooms-Bookings-System/internal/config"
+	"github.com/tjasha/Rooms-Bookings-System/internal/forms"
 	"github.com/tjasha/Rooms-Bookings-System/internal/models"
 	"github.com/tjasha/Rooms-Bookings-System/internal/render"
 	"log"
@@ -60,9 +61,15 @@ func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// Reservation renders reservation page
+// Reservation renders reservation page and display the form
 func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, r, "make-reservation.page.tmpl", &models.TemplateData{})
+	render.RenderTemplate(w, r, "make-reservation.page.tmpl", &models.TemplateData{
+		Form: forms.New(nil),
+	})
+}
+
+// PostReservation handles posting of reservation form
+func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 }
 
 // Generals renders the general quarters page
