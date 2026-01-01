@@ -59,12 +59,6 @@
 
 <script>
     document.getElementById("check-availability-button").addEventListener("click", function () {
-        // notify("This is my message", "error")
-        // notifyModal("title", "<em>hello</em>", "success", "My text for the button")
-        // attention.toast({msg: "hello world", icon: "error"});
-        // attention.success({msg: "hello world", footer: "footer"});
-        // attention.error({msg: "ooops", footer: "footer"});
-
         let html = `
     <form id="check-availability-form" action="" method="post" novalidate class="needs-validation">
         <div class="form-row">
@@ -86,6 +80,15 @@
         attention.custom({
             title: 'Choose your dates',
             msg: html,
+            callback: function (result) {
+                console.log("called");
+
+                fetch('/search-availability-json').then(response => response.json())
+                    .then(data => {
+                        console.log(data)
+                        console.log(data.ok)
+                    })
+            }
         });
     })
 
