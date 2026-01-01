@@ -244,16 +244,19 @@
                 focusConfirm: false,
                 showCancelButton: true,
                 willOpen: () => {
-                    const elem = document.getElementById('reservation-dates-modal');
-                    const rp = new DateRangePicker(elem, {
-                        format: 'dd-mm-yyyy',
-                        showOnFocus: true,
-                    })
+                    //logic of this function is moved to generals.page.tmpl
+                    if (c.willOpen !== undefined ) {
+                        c.willOpen()
+                    }
+
                 },
                 didOpen: () => {
-                    document.getElementById('start').removeAttribute('disabled');
-                    document.getElementById('end').removeAttribute('disabled')
+                    //logic of this function is moved to generals.page.tmpl
+                    if (c.didOpen !== undefined ) {
+                        c.didOpen()
+                    }
                 },
+
                 preConfirm: () => {
                     return [
                         document.getElementById('start').value,
