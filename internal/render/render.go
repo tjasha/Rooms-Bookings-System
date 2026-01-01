@@ -3,13 +3,12 @@ package render
 import (
 	"bytes"
 	"github.com/justinas/nosurf"
+	"github.com/tjasha/Rooms-Bookings-System/internal/config"
+	"github.com/tjasha/Rooms-Bookings-System/internal/models"
 	"log"
 	"net/http"
 	"path/filepath"
 	"text/template"
-
-	"github.com/tjasha/Rooms-Bookings-System/pkg/config"
-	"github.com/tjasha/Rooms-Bookings-System/pkg/models"
 )
 
 var app *config.AppConfig

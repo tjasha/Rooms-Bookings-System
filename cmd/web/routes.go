@@ -1,12 +1,12 @@
 package main
 
 import (
+	"github.com/tjasha/Rooms-Bookings-System/internal/config"
+	"github.com/tjasha/Rooms-Bookings-System/internal/handlers"
 	"net/http"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
-	"github.com/tjasha/Rooms-Bookings-System/pkg/config"
-	"github.com/tjasha/Rooms-Bookings-System/pkg/handlers"
 )
 
 func routes(app *config.AppConfig) http.Handler {

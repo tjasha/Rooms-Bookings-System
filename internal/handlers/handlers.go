@@ -3,12 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/tjasha/Rooms-Bookings-System/internal/config"
+	"github.com/tjasha/Rooms-Bookings-System/internal/models"
+	"github.com/tjasha/Rooms-Bookings-System/internal/render"
 	"log"
 	"net/http"
-
-	"github.com/tjasha/Rooms-Bookings-System/pkg/config"
-	"github.com/tjasha/Rooms-Bookings-System/pkg/models"
-	"github.com/tjasha/Rooms-Bookings-System/pkg/render"
 )
 
 //Repository pattern:
