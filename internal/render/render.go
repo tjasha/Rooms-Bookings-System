@@ -2,13 +2,13 @@ package render
 
 import (
 	"bytes"
+	"github.com/justinas/nosurf"
+	"github.com/tjasha/Rooms-Bookings-System/internal/config"
+	"github.com/tjasha/Rooms-Bookings-System/internal/models"
 	"log"
 	"net/http"
 	"path/filepath"
 	"text/template"
-
-	"github.com/tjasha/Rooms-Bookings-System/pkg/config"
-	"github.com/tjasha/Rooms-Bookings-System/pkg/models"
 )
 
 var app *config.AppConfig
@@ -18,33 +18,40 @@ func NewTemplates(a *config.AppConfig) {
 }
 
 // this will be data added to every template
-func AddDefaultData(td *models.TemplateData) *models.TemplateData{
+func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
+
+	//pop string in the session until there is different data - this are populated when session doesn't have data
+	td.Flash = app.Session.PopString(r.Context(), "flash")
+	td.Error = app.Session.PopString(r.Context(), "error")
+	td.Warning = app.Session.PopString(r.Context(), "warning")
+
+	td.CSRFToken = nosurf.Token(r)
 	return td
 }
 
-func RenderTemplate(w http.ResponseWriter, templ string, templatedata *models.TemplateData) {
+func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, templatedata *models.TemplateData) {
 
 	var tc map[string]*template.Template
-	
-	if app.UseCache{
-		//get template cache from the app config	
+
+	if app.UseCache {
+		//get template cache from the app config
 		tc = app.TemplateCache
 	} else {
 		tc, _ = CreateTemplateCache()
 	}
 
-	// get requested template from cache 
-	template, ok := tc[templ]
+	// get requested template from cache
+	template, ok := tc[tmpl]
 	if !ok {
 		log.Fatal("Could not get template from template cache ")
 	}
 	buf := new(bytes.Buffer) //used for better error checking
 
 	//adding data to every template - currently doesn't actually hold data
-	templatedata = AddDefaultData(templatedata)
+	templatedata = AddDefaultData(templatedata, r)
 
 	// we need to send some data here to not have nil
-	err := template.Execute(buf, templatedata) 
+	err := template.Execute(buf, templatedata)
 	if err != nil {
 		log.Println(err)
 	}
@@ -55,7 +62,6 @@ func RenderTemplate(w http.ResponseWriter, templ string, templatedata *models.Te
 		log.Println(err)
 	}
 }
-
 
 func CreateTemplateCache() (map[string]*template.Template, error) {
 	myCache := map[string]*template.Template{} //it's creating empty map
@@ -71,12 +77,11 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 
 	//range through all files ending with *page.tmpl that we found before
 	for _, page := range pages { //page is full path to the template
-		name := filepath.Base(page) //returns last element of the path = name of the file 
+		name := filepath.Base(page)                    //returns last element of the path = name of the file
 		ts, err := template.New(name).ParseFiles(page) //(ts = template set) we  parse this file (page) and store in the template (name)
 		if err != nil {
 			return myCache, err
 		}
-
 
 		//now we look for all layouts - we use the same syntax as for the pages
 		matches, err := filepath.Glob("./templates/*.layout.tmpl")
@@ -97,4 +102,3 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 
 	return myCache, nil
 }
-

@@ -1,0 +1,83 @@
+{{template "base" .}}
+
+{{define "content"}}
+
+
+<!--Main content-->
+<div class="container">
+
+    <div class="row">
+        <!--in bootstrap col is divided to 12 section-->
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <img src="/static/images/room-images/marjors-suite.png"
+                 class="img-fluid img-thumbnail mx-auto d-block room-image"
+                 alt="room image">
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col">
+            <h1>Welcome to Fort Smythe Bed and Breakfast</h1>
+            <p class="text-center mt-4">Your home away from home. In the perfect location! you'll always remember</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <p>
+                some more text some more text some more text some more text some more text some more text some more text
+                some more text
+                some more text some more text some more text some more text some more text some more text some more text
+                some more text
+                some more text some more text some more text some more text some more text some more text some more text
+                some more text
+                some more text some more text some more text some more text some more text some more text some more text
+                some more text
+                some more text some more text some more text some more text some more text some more text some more text
+                some more text
+                some more text some more text some more text some more text some more text some more text some more text
+                some more text
+                some more text some more text some more text some more text some more text some more text some more text
+                some more text
+            </p>
+        </div>
+    </div>
+
+    <div>
+        <div class="col text-center">
+            <a id="check-availability-button" href="#!" class="btn btn-success">Check Availability</a>
+        </div>
+    </div>
+</div>
+
+
+{{end}}
+
+{{define "js"}}
+<script>
+    document.getElementById("check-availability-button").addEventListener("click", function () {
+        let html = `
+        <form id="check-availability-form" action="" method="post" novalidate class="needs-validation">
+            <div class="form-row">
+                <div class="col">
+                    <div class="form-row" id="reservation-dates-modal">
+                        <div class="col">
+                            <input disabled required class="form-control" type="text" name="start" id="start" placeholder="Arrival">
+                        </div>
+                        <div class="col">
+                            <input disabled required class="form-control" type="text" name="end" id="end" placeholder="Departure">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+        `;
+        attention.custom({
+            title: 'Choose your dates',
+            msg: html,
+        });
+    })
+</script>
+{{end}}
