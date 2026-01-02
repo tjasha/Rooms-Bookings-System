@@ -59,7 +59,7 @@ func getRoutes() http.Handler {
 	//we are adding middleware that is recovering application if there was fatal error
 	mux.Use(middleware.Recoverer)
 	// we are calling middleware here - this is security protection! don't remove it!
-	mux.Use(NoSurf)
+	// mux.Use(NoSurf) --> to test, we don't want to look for crsf token
 	mux.Use(SessionLoad)
 
 	mux.Get("/", Repo.Home)
