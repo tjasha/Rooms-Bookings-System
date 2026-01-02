@@ -175,6 +175,20 @@
         })
     }
 
+    //general notification when there is error and we want to display it on any page
+    {{with .Error}}
+    notify("{{.}}", "error")
+    {{end}}
+
+    //general notification when i want to show success message on any page
+    {{with .Flash}}
+    notify("{{.}}", "success")
+    {{end}}
+
+    //general notification when i want to show warning message on any page
+    {{with .Warning}}
+    notify("{{.}}", "warning")
+    {{end}}
 
     function Prompt() {
         let toast = function (c) {

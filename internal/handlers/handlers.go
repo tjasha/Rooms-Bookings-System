@@ -172,8 +172,15 @@ func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) 
 	reservation, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
 	if !ok {
 		log.Println("Cannot get reservation from session")
+		//if user gets to reservation summary page without reservation, this error will be sent and user will be redirected
+		m.App.Session.Put(r.Context(), "error", "Can't get reservation from session")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
+
+	//when we don't need reservation object anymore, we can remove it from session
+	m.App.Session.Remove(r.Context(), "reservation")
+
 	data := make(map[string]interface{})
 	data["reservation"] = reservation
 

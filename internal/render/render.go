@@ -19,6 +19,12 @@ func NewTemplates(a *config.AppConfig) {
 
 // this will be data added to every template
 func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
+
+	//pop string in the session until there is different data - this are populated when session doesn't have data
+	td.Flash = app.Session.PopString(r.Context(), "flash")
+	td.Error = app.Session.PopString(r.Context(), "error")
+	td.Warning = app.Session.PopString(r.Context(), "warning")
+
 	td.CSRFToken = nosurf.Token(r)
 	return td
 }
