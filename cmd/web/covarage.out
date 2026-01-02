@@ -1,0 +1,10 @@
+mode: set
+github.com/tjasha/Rooms-Bookings-System/cmd/web/main.go:24.13,27.16 2 0
+github.com/tjasha/Rooms-Bookings-System/cmd/web/main.go:27.16,29.3 1 0
+github.com/tjasha/Rooms-Bookings-System/cmd/web/main.go:31.2,41.16 4 0
+github.com/tjasha/Rooms-Bookings-System/cmd/web/main.go:45.18,65.16 10 1
+github.com/tjasha/Rooms-Bookings-System/cmd/web/main.go:65.16,68.3 2 0
+github.com/tjasha/Rooms-Bookings-System/cmd/web/main.go:70.2,81.12 6 1
+github.com/tjasha/Rooms-Bookings-System/cmd/web/middleware.go:14.45,26.2 3 1
+github.com/tjasha/Rooms-Bookings-System/cmd/web/middleware.go:30.50,32.2 1 1
+github.com/tjasha/Rooms-Bookings-System/cmd/web/routes.go:12.49,44.2 18 1

@@ -2,16 +2,18 @@ package render
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/justinas/nosurf"
 	"github.com/tjasha/Rooms-Bookings-System/internal/config"
 	"github.com/tjasha/Rooms-Bookings-System/internal/models"
+	"html/template"
 	"log"
 	"net/http"
 	"path/filepath"
-	"text/template"
 )
 
 var app *config.AppConfig
+var pathToTemplates = "./templates"
 
 func NewTemplates(a *config.AppConfig) {
 	app = a
@@ -70,7 +72,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 	// they should be added in order
 
 	// i want to first add all *page.tmpl from ./templates
-	pages, err := filepath.Glob("./templates/*.page.tmpl") //we just look for all files with this pattern
+	pages, err := filepath.Glob(fmt.Sprintf("%s/*.page.tmpl", pathToTemplates)) //we just look for all files with this pattern
 	if err != nil {
 		return myCache, err
 	}
@@ -84,14 +86,14 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 		}
 
 		//now we look for all layouts - we use the same syntax as for the pages
-		matches, err := filepath.Glob("./templates/*.layout.tmpl")
+		matches, err := filepath.Glob(fmt.Sprintf("%s/*.page.tmpl", pathToTemplates))
 		if err != nil {
 			return myCache, err
 		}
 
 		//checking how many elements we have
 		if len(matches) > 0 {
-			ts, err = ts.ParseGlob("./templates/*.layout.tmpl") // check if any of the pages needs layout inside of them to be rendered. if yes, it adds it to the ts
+			ts, err = ts.ParseGlob(fmt.Sprintf("%s/*.page.tmpl", pathToTemplates)) // check if any of the pages needs layout inside of them to be rendered. if yes, it adds it to the ts
 			if err != nil {
 				return myCache, err
 			}

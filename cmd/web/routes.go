@@ -17,7 +17,7 @@ func routes(app *config.AppConfig) http.Handler {
 	//we are adding middleware that is recovering application if there was fatal error
 	mux.Use(middleware.Recoverer)
 	// we are calling middleware here - this is security protection! don't remove it!
-	mux.Use(NoSerf)
+	mux.Use(NoSurf)
 	mux.Use(SessionLoad)
 
 	mux.Get("/", handlers.Repo.Home)

@@ -23,6 +23,27 @@ var session *scs.SessionManager
 
 func main() {
 
+	err := run()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(fmt.Sprintf("Starting application on port %s", portNumber))
+
+	//we add something that actually serves
+	srv := &http.Server{
+		Addr:    portNumber,
+		Handler: routes(&app),
+	}
+
+	//we need to start a server
+	err = srv.ListenAndServe()
+	log.Panic(err)
+	//log.Fatal(err)
+}
+
+func run() error {
+
 	//what can i put in the session - primitive types are already allowed
 	// we want to store reservation object
 	gob.Register(models.Reservation{})
@@ -42,7 +63,8 @@ func main() {
 	//i want to create template cache here
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
-		log.Fatal("cannot create template cache %v", err)
+		log.Fatal(fmt.Printf("cannot create template cache %v", err))
+		return err
 	}
 
 	app.TemplateCache = tc
@@ -56,21 +78,5 @@ func main() {
 	//create handlers and return variable back to handlers
 	handlers.NewHandlers(repo)
 
-	// we added this into routes
-	// http.HandleFunc("/", handlers.Repo.Home)
-	// http.HandleFunc("/about", handlers.Repo.About)
-
-	fmt.Println(fmt.Sprintf("Starting application on port %s", portNumber))
-	//_ = http.ListenAndServe(portNumber, nil) //we specify what to listen, in this case localhost on port 8080
-
-	//we add something that actually serves
-	srv := &http.Server{
-		Addr:    portNumber,
-		Handler: routes(&app),
-	}
-
-	//we need to start a server
-	err = srv.ListenAndServe()
-	log.Panic(err)
-	//log.Fatal(err)
+	return nil
 }
