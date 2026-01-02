@@ -63,8 +63,13 @@ func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 
 // Reservation renders reservation page and display the form
 func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
+	var emptyReservation models.Reservation
+	data := make(map[string]interface{})
+	data["reservation"] = emptyReservation
+
 	render.RenderTemplate(w, r, "make-reservation.page.tmpl", &models.TemplateData{
 		Form: forms.New(nil),
+		Data: data,
 	})
 }
 
@@ -87,19 +92,21 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	//get data that user inputed
 	form := forms.New(r.PostForm)
 
-	form.Has("first_name", r)
+	//form.Has("first_name", r) --> it's not necessary anymore
+	form.Required("first_name", "last_name", "email")
+	form.MinLength("first_name", 3, r)
 
 	if !form.Valid() {
 		data := make(map[string]interface{})
 		data["reservation"] = reservation
 
+		//saved data that user wrote
 		render.RenderTemplate(w, r, "make-reservation.page.tmpl", &models.TemplateData{
 			Form: form,
 			Data: data,
 		})
 		return
 	}
-
 }
 
 // Generals renders the general quarters page

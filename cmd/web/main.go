@@ -36,7 +36,7 @@ func main() {
 	//i want to create template cache here
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
-		log.Fatal("cannot create template cache")
+		log.Fatal("cannot create template cache %v", err)
 	}
 
 	app.TemplateCache = tc
@@ -65,5 +65,6 @@ func main() {
 
 	//we need to start a server
 	err = srv.ListenAndServe()
-	log.Fatal(err)
+	log.Panic(err)
+	//log.Fatal(err)
 }
