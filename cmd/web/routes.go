@@ -34,6 +34,7 @@ func routes(app *config.AppConfig) http.Handler {
 
 	mux.Get("/make-reservation", handlers.Repo.Reservation)
 	mux.Post("/make-reservation", handlers.Repo.PostReservation)
+	mux.Get("/reservation-summary", handlers.Repo.ReservationSummary)
 
 	//where all our images are saved
 	fileServer := http.FileServer(http.Dir("./static/"))

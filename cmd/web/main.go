@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/gob"
 	"fmt"
 	"github.com/tjasha/Rooms-Bookings-System/internal/config"
 	"github.com/tjasha/Rooms-Bookings-System/internal/handlers"
+	"github.com/tjasha/Rooms-Bookings-System/internal/models"
 	"github.com/tjasha/Rooms-Bookings-System/internal/render"
 	"log"
 	"net/http"
@@ -20,6 +22,10 @@ var app config.AppConfig // now we can also use it in routes
 var session *scs.SessionManager
 
 func main() {
+
+	//what can i put in the session - primitive types are already allowed
+	// we want to store reservation object
+	gob.Register(models.Reservation{})
 
 	//change this to true when in production, using it to define encription
 	app.InProduction = false

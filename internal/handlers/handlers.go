@@ -82,6 +82,7 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//storing everything that user enters - may be bad data
+	//reservation object
 	reservation := models.Reservation{
 		FirstName: r.Form.Get("first_name"),
 		LastName:  r.Form.Get("last_name"),
@@ -108,6 +109,14 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
+	// we put reservation object to the session
+	m.App.Session.Put(r.Context(), "reservation", reservation)
+
+	//when you receive POST request, by good practice, you should direct the user through http redirect
+	//StatusSeeOther is a standard
+	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
+
 }
 
 // Generals renders the general quarters page
@@ -156,4 +165,19 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 // Contact renders contact
 func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 	render.RenderTemplate(w, r, "contact.page.tmpl", &models.TemplateData{})
+}
+
+func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) {
+	//asserting reservation into Reservation object
+	reservation, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
+	if !ok {
+		log.Println("Cannot get reservation from session")
+		return
+	}
+	data := make(map[string]interface{})
+	data["reservation"] = reservation
+
+	render.RenderTemplate(w, r, "reservation-summary.page.tmpl", &models.TemplateData{
+		Data: data,
+	})
 }
