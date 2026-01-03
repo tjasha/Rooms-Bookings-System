@@ -2,6 +2,7 @@ package render
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"github.com/justinas/nosurf"
 	"github.com/tjasha/Rooms-Bookings-System/internal/config"
@@ -31,7 +32,7 @@ func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateDa
 	return td
 }
 
-func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, templatedata *models.TemplateData) {
+func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, templatedata *models.TemplateData) error {
 
 	var tc map[string]*template.Template
 
@@ -45,24 +46,32 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, templat
 	// get requested template from cache
 	template, ok := tc[tmpl]
 	if !ok {
-		log.Fatal("Could not get template from template cache ")
+		//log.Println("Could not get template from template cache ")
+		return errors.New("Could not get template from template cache ")
 	}
 	buf := new(bytes.Buffer) //used for better error checking
 
-	//adding data to every template - currently doesn't actually hold data
+	////adding data to every template - currently doesn't actually hold data
+	//templatedata = AddDefaultData(templatedata, r)
+	//
+	//// we need to send some data here to not have nil
+	//err := template.Execute(buf, templatedata)
+	//if err != nil {
+	//	log.Println(err)
+	//	return err
+	//}
 	templatedata = AddDefaultData(templatedata, r)
 
-	// we need to send some data here to not have nil
-	err := template.Execute(buf, templatedata)
-	if err != nil {
-		log.Println(err)
-	}
+	_ = template.Execute(buf, templatedata)
 
 	//render the template
-	_, err = buf.WriteTo(w)
+	_, err := buf.WriteTo(w)
 	if err != nil {
-		log.Println(err)
+		log.Println("error writing template to browser", err)
+		return err
 	}
+
+	return nil
 }
 
 func CreateTemplateCache() (map[string]*template.Template, error) {

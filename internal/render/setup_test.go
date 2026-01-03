@@ -28,9 +28,30 @@ func TestMain(m *testing.M) {
 	session.Cookie.Persist = true                  // session will be stored in the cookie
 	session.Cookie.SameSite = http.SameSiteLaxMode // strict about the sites that cookie is valid for
 	session.Cookie.Secure = false                  // no need for encription
+
 	testApp.Session = session
 
 	app = &testApp
 
 	os.Exit(m.Run())
+}
+
+// we're creating http response writer
+// response interface has header, writeHeader amd write
+type myWriter struct{}
+
+func (tw *myWriter) Header() http.Header {
+	var h http.Header
+	return h
+}
+
+// it can stay empty
+func (tw *myWriter) WriteHeader(i int) {
+
+}
+
+// writer
+func (tw *myWriter) Write(b []byte) (int, error) {
+	length := len(b)
+	return length, nil
 }
