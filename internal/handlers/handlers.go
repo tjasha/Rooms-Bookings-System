@@ -2,14 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/tjasha/Rooms-Bookings-System/internal/config"
 	"github.com/tjasha/Rooms-Bookings-System/internal/forms"
 	"github.com/tjasha/Rooms-Bookings-System/internal/helpers"
 	"github.com/tjasha/Rooms-Bookings-System/internal/models"
 	"github.com/tjasha/Rooms-Bookings-System/internal/render"
-	"log"
 	"net/http"
 )
 
@@ -62,7 +60,6 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 // PostReservation handles posting of reservation form
 func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
-	err = errors.New("This is an error message")
 	if err != nil {
 		//we can use centralised errors
 		helpers.ServerError(w, err)
@@ -144,7 +141,8 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 
 	out, err := json.MarshalIndent(resp, "", "     ")
 	if err != nil {
-		log.Println(err)
+		helpers.ServerError(w, err)
+		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(out)
@@ -159,7 +157,7 @@ func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) 
 	//asserting reservation into Reservation object
 	reservation, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
 	if !ok {
-		log.Println("Cannot get reservation from session")
+		m.App.ErrorLog.Println("Cannot get reservation from session")
 		//if user gets to reservation summary page without reservation, this error will be sent and user will be redirected
 		m.App.Session.Put(r.Context(), "error", "Can't get reservation from session")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
