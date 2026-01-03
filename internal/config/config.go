@@ -2,6 +2,7 @@ package config
 
 import (
 	"html/template"
+	"log"
 
 	"github.com/alexedwards/scs/v2"
 )
@@ -13,6 +14,8 @@ import (
 type AppConfig struct {
 	UseCache      bool //we use this to allow us to test in dev mode
 	TemplateCache map[string]*template.Template
+	InfoLog       *log.Logger
+	ErrorLog      *log.Logger // to handle errors easier
 	InProduction  bool
 	Session       *scs.SessionManager
 }
