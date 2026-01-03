@@ -1,0 +1,22 @@
+mode: set
+github.com/tjasha/Rooms-Bookings-System/internal/handlers/handlers.go:25.47,29.2 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/handlers/handlers.go:32.33,34.2 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/handlers/handlers.go:38.67,45.2 3 1
+github.com/tjasha/Rooms-Bookings-System/internal/handlers/handlers.go:48.68,62.2 5 1
+github.com/tjasha/Rooms-Bookings-System/internal/handlers/handlers.go:65.74,74.2 4 1
+github.com/tjasha/Rooms-Bookings-System/internal/handlers/handlers.go:77.78,79.16 2 0
+github.com/tjasha/Rooms-Bookings-System/internal/handlers/handlers.go:79.16,82.3 2 0
+github.com/tjasha/Rooms-Bookings-System/internal/handlers/handlers.go:86.2,101.19 6 0
+github.com/tjasha/Rooms-Bookings-System/internal/handlers/handlers.go:101.19,111.3 4 0
+github.com/tjasha/Rooms-Bookings-System/internal/handlers/handlers.go:114.2,118.66 2 0
+github.com/tjasha/Rooms-Bookings-System/internal/handlers/handlers.go:123.71,125.2 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/handlers/handlers.go:128.69,130.2 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/handlers/handlers.go:133.75,135.2 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/handlers/handlers.go:138.79,143.2 3 0
+github.com/tjasha/Rooms-Bookings-System/internal/handlers/handlers.go:151.79,158.16 3 0
+github.com/tjasha/Rooms-Bookings-System/internal/handlers/handlers.go:158.16,160.3 1 0
+github.com/tjasha/Rooms-Bookings-System/internal/handlers/handlers.go:161.2,162.14 2 0
+github.com/tjasha/Rooms-Bookings-System/internal/handlers/handlers.go:166.70,168.2 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/handlers/handlers.go:170.81,173.9 2 0
+github.com/tjasha/Rooms-Bookings-System/internal/handlers/handlers.go:173.9,179.3 4 0
+github.com/tjasha/Rooms-Bookings-System/internal/handlers/handlers.go:182.2,189.4 4 0

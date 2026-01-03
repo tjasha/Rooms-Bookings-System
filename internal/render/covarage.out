@@ -1,0 +1,23 @@
+mode: set
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:19.40,21.2 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:24.84,33.2 5 1
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:35.115,39.18 2 1
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:39.18,42.3 1 0
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:42.8,44.3 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:47.2,48.9 2 1
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:48.9,51.3 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:52.2,69.16 5 1
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:69.16,72.3 2 0
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:74.2,74.12 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:77.67,85.16 3 1
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:85.16,87.3 1 0
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:90.2,90.29 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:90.29,93.17 3 1
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:93.17,95.4 1 0
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:98.3,99.17 2 1
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:99.17,101.4 1 0
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:104.3,104.23 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:104.23,106.18 2 1
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:106.18,108.5 1 0
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:111.3,111.21 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/render/render.go:114.2,114.21 1 1

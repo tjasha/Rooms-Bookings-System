@@ -1,0 +1,18 @@
+mode: set
+github.com/tjasha/Rooms-Bookings-System/internal/forms/errors.go:7.44,9.2 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/forms/errors.go:12.42,14.18 2 1
+github.com/tjasha/Rooms-Bookings-System/internal/forms/errors.go:14.18,16.3 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/forms/errors.go:18.2,18.14 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/forms/forms.go:17.29,19.2 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/forms/forms.go:22.33,27.2 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/forms/forms.go:31.43,33.31 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/forms/forms.go:33.31,35.37 2 1
+github.com/tjasha/Rooms-Bookings-System/internal/forms/forms.go:35.37,37.4 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/forms/forms.go:42.39,45.13 2 1
+github.com/tjasha/Rooms-Bookings-System/internal/forms/forms.go:45.13,49.3 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/forms/forms.go:50.2,50.13 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/forms/forms.go:54.57,56.21 2 1
+github.com/tjasha/Rooms-Bookings-System/internal/forms/forms.go:56.21,59.3 2 1
+github.com/tjasha/Rooms-Bookings-System/internal/forms/forms.go:60.2,60.13 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/forms/forms.go:64.38,65.40 1 1
+github.com/tjasha/Rooms-Bookings-System/internal/forms/forms.go:65.40,67.3 1 1

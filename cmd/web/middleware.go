@@ -9,16 +9,16 @@ import (
 // All middlewares need to have a parameter usually called next type http.Handler
 // all middleware needs to return http.Handler
 
-//creating noSerf token
+// creating noSurf token
 // adds CSRS protection to all POST requests
-func NoSerf(next http.Handler) http.Handler {
+func NoSurf(next http.Handler) http.Handler {
 	csrfHandler := nosurf.New(next)
 
 	//have to creat a cookie with som values, valid to all sites
 	csrfHandler.SetBaseCookie(http.Cookie{
 		HttpOnly: true,
-		Path: "/",
-		Secure: app.InProduction,
+		Path:     "/",
+		Secure:   app.InProduction,
 		SameSite: http.SameSiteLaxMode,
 	})
 
