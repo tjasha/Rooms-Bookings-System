@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"github.com/tjasha/Rooms-Bookings-System/internal/config"
 	"github.com/tjasha/Rooms-Bookings-System/internal/handlers"
+	"github.com/tjasha/Rooms-Bookings-System/internal/helpers"
 	"github.com/tjasha/Rooms-Bookings-System/internal/models"
 	"github.com/tjasha/Rooms-Bookings-System/internal/render"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/alexedwards/scs/v2"
@@ -20,6 +22,8 @@ const portNumber = ":8080"
 
 var app config.AppConfig // now we can also use it in routes
 var session *scs.SessionManager
+var infoLog *log.Logger
+var errorLog *log.Logger
 
 func main() {
 
@@ -51,6 +55,20 @@ func run() error {
 	//change this to true when in production, using it to define encription
 	app.InProduction = false
 
+	//Stdout = standart out = terminal window
+	//prefix to all of this logs is INFO
+	//adding date and time
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	//adding info log to the application
+	app.InfoLog = infoLog
+
+	// currently writing in the terminal window
+	// prefix will be ERROR
+	// adding date and time, but also more information about the error
+	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	//adding error log to the application
+	app.ErrorLog = errorLog
+
 	//initiate session package
 	session = scs.New()
 	session.Lifetime = 24 * time.Hour              //i want session to persist for 24h
@@ -77,6 +95,9 @@ func run() error {
 	repo := handlers.NewRepo(&app)
 	//create handlers and return variable back to handlers
 	handlers.NewHandlers(repo)
+
+	//this will populate app in helpers.go with app config
+	helpers.NewHelpers(&app)
 
 	return nil
 }
