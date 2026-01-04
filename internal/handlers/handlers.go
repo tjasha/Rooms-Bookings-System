@@ -4,10 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/tjasha/Rooms-Bookings-System/internal/config"
+	"github.com/tjasha/Rooms-Bookings-System/internal/driver"
 	"github.com/tjasha/Rooms-Bookings-System/internal/forms"
 	"github.com/tjasha/Rooms-Bookings-System/internal/helpers"
 	"github.com/tjasha/Rooms-Bookings-System/internal/models"
 	"github.com/tjasha/Rooms-Bookings-System/internal/render"
+	"github.com/tjasha/Rooms-Bookings-System/internal/repository"
+	"github.com/tjasha/Rooms-Bookings-System/internal/repository/dbrepo"
 	"net/http"
 )
 
@@ -19,12 +22,15 @@ var Repo *Repository
 // repository type
 type Repository struct {
 	App *config.AppConfig
+	DB  repository.DatabaseRepo
 }
 
 // create new repository
-func NewRepo(a *config.AppConfig) *Repository {
+// also adding database connection
+func NewRepo(a *config.AppConfig, db *driver.DB) *Repository {
 	return &Repository{
 		App: a,
+		DB:  dbrepo.NewPostresRepo(db.SQL, a),
 	}
 }
 
