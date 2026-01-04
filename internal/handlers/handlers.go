@@ -12,6 +12,8 @@ import (
 	"github.com/tjasha/Rooms-Bookings-System/internal/repository"
 	"github.com/tjasha/Rooms-Bookings-System/internal/repository/dbrepo"
 	"net/http"
+	"strconv"
+	"time"
 )
 
 //Repository pattern:
@@ -72,6 +74,26 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	sd := r.Form.Get("start_date")
+	ed := r.Form.Get("end_date")
+
+	// in golang, standard time is 01/02 03:04:05PM '06 -0700
+	// we need to define the layout and pars it in time format
+	layout := "02-01-2006"
+	startDate, err := time.Parse(layout, sd)
+	if err != nil {
+		helpers.ServerError(w, err)
+	}
+	endDate, err := time.Parse(layout, ed)
+	if err != nil {
+		helpers.ServerError(w, err)
+	}
+
+	roomID, err := strconv.Atoi(r.Form.Get("room_id"))
+	if err != nil {
+		helpers.ServerError(w, err)
+	}
+
 	//storing everything that user enters - may be bad data
 	//reservation object
 	reservation := models.Reservation{
@@ -79,6 +101,9 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		LastName:  r.Form.Get("last_name"),
 		Email:     r.Form.Get("email"),
 		Phone:     r.Form.Get("phone"),
+		StartDate: startDate,
+		EndDate:   endDate,
+		RoomID:    roomID,
 	}
 
 	//get data that user inputed
@@ -99,6 +124,12 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 			Data: data,
 		})
 		return
+	}
+
+	// write information in the database
+	err = m.DB.InsertReservation(reservation)
+	if err != nil {
+		helpers.ServerError(w, err)
 	}
 
 	// we put reservation object to the session

@@ -85,14 +85,14 @@ func run() (*driver.DB, error) {
 	app.Session = session
 
 	//connect to database
-	log.Println("Connectiong to DB")
+	log.Println("Connecting to DB")
 	db, err := driver.ConnectSQL("host=localhost port=5445 dbname=booking user=tjasaspes password=")
 
 	if err != nil {
 		log.Fatal("Cannot connect to database! Dying..")
 	}
 
-	log.Println("Connectiong to DB")
+	log.Println("Connected to DB")
 
 	// in theory closing connection should be here, but if it is, it'll close connection just after opening
 	// for this reason, we return *driver.DB from the run()
