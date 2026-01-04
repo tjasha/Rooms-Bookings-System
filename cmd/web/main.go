@@ -54,6 +54,9 @@ func run() (*driver.DB, error) {
 	//what can i put in the session - primitive types are already allowed
 	// we want to store reservation object
 	gob.Register(models.Reservation{})
+	gob.Register(models.Room{})
+	gob.Register(models.User{})
+	gob.Register(models.Restriction{})
 
 	//change this to true when in production, using it to define encription
 	app.InProduction = false
@@ -106,7 +109,7 @@ func run() (*driver.DB, error) {
 	app.UseCache = false
 
 	//this give render access to appConfig
-	render.NewTemplates(&app)
+	render.NewRenderer(&app)
 
 	//create repository variable (app config and database connection)
 	repo := handlers.NewRepo(&app, db)
