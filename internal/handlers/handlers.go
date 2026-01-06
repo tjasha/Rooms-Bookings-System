@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/go-chi/chi"
 	"github.com/tjasha/Rooms-Bookings-System/internal/config"
 	"github.com/tjasha/Rooms-Bookings-System/internal/driver"
@@ -55,13 +56,38 @@ func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 
 // Reservation renders reservation page and display the form
 func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
-	var emptyReservation models.Reservation
+
+	//we pull reservation out of the session (it has start and end date and roomID
+	res, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
+	if !ok {
+		helpers.ServerError(w, errors.New("reservation session not found"))
+		return
+	}
+
+	// ret information of the room from DB
+	room, err := m.DB.GetRoomById(res.RoomID)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+	// save room name into session
+	res.Room.RoomName = room.RoomName
+
+	// we need to change dates from time.Time to displayable date
+	sd := res.StartDate.Format("02-01-2006")
+	ed := res.EndDate.Format("02-01-2006")
+	//adding dates in the map
+	stringMap := make(map[string]string)
+	stringMap["start_date"] = sd
+	stringMap["end_date"] = ed
+
 	data := make(map[string]interface{})
-	data["reservation"] = emptyReservation
+	data["reservation"] = res
 
 	render.Template(w, r, "make-reservation.page.tmpl", &models.TemplateData{
-		Form: forms.New(nil),
-		Data: data,
+		Form:      forms.New(nil),
+		Data:      data,
+		StringMap: stringMap, //adding dates
 	})
 }
 
