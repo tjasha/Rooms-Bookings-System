@@ -87,6 +87,7 @@
                 const rp = new DateRangePicker(elem, {
                     format: 'dd-mm-yyyy',
                     showOnFocus: true,
+                    minDate: new Date(),
                 })
             },
             didOpen: () => {
@@ -103,14 +104,19 @@
                 let formData = new FormData(form);
                 //this is appending CSRFToken from any template that we created
                 formData.append("csrf_token", "{{.CSRFToken}}")
+                // we add room id, which it 1
+                formData.append("room_id", "1")
 
                 fetch('/search-availability-json', {
                     method: "post",
                     body: formData,
                 }).then(response => response.json())
                     .then(data => {
-                        console.log(data)
-                        console.log(data.ok)
+                        if (data.ok) {
+                            console.log("room is available")
+                        } else {
+                            console.log("room is not available :(")
+                        }
                     })
             }
         });
