@@ -28,7 +28,7 @@ func NewPostresRepo(conn *sql.DB, a *config.AppConfig) repository.DatabaseRepo {
 	}
 }
 
-func NewTestingRepo(conn *sql.DB, a *config.AppConfig) repository.DatabaseRepo {
+func NewTestingRepo(a *config.AppConfig) repository.DatabaseRepo {
 	//we need to create test-repo.go to
 	return &testDBRepo{
 		App: a,
