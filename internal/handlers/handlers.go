@@ -68,14 +68,16 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 	//we pull reservation out of the session (it has start and end date and roomID
 	res, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
 	if !ok {
-		helpers.ServerError(w, errors.New("reservation session not found"))
+		m.App.Session.Put(r.Context(), "error", "can't get reservation from session")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 
 	// get information of the room from DB
 	room, err := m.DB.GetRoomById(res.RoomID)
 	if err != nil {
-		helpers.ServerError(w, err)
+		m.App.Session.Put(r.Context(), "error", "can't find room")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 	// save room name into session

@@ -4,6 +4,7 @@ package dbrepo
 // we need to change all functions to have receiver testDBRepo instead of postgres
 
 import (
+	"errors"
 	"github.com/tjasha/Rooms-Bookings-System/internal/models"
 	"time"
 )
@@ -36,6 +37,9 @@ func (m *testDBRepo) SearchAvailabilityForAllRooms(start, end time.Time) ([]mode
 // GetRoomById is getting room by id
 func (m *testDBRepo) GetRoomById(id int) (models.Room, error) {
 	var room models.Room
+	if id > 2 {
+		return room, errors.New("some error")
+	}
 
 	return room, nil
 }
