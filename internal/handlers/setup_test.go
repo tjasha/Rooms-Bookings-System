@@ -55,10 +55,10 @@ func getRoutes() http.Handler {
 	app.UseCache = true
 
 	//create repository variable
-	repo := NewRepo(&app)
+	repo := NewTestRepo(&app)
 	//create handlers and return variable back to handlers
 	NewHandlers(repo)
-	render.NewTemplates(&app)
+	render.NewRenderer(&app)
 
 	mux := chi.NewRouter()
 
