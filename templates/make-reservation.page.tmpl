@@ -6,12 +6,22 @@
         <div class="col">
             <h1 class="mt-3">Make Reservation</h1>
 
-            <!--This is getting previoustly imputed data from the user if they exist from reservation-->
+            <!--This is getting previously imputed data from the user if they exist from reservation-->
             {{$res := index .Data "reservation"}}
+
+            <p><strong>Reservation Details</strong><br>
+            Room: {{$res.Room.RoomName}}<br>
+            Arrival: {{index .StringMap "start_date"}}<br>
+            Departure: {{index .StringMap "end_date"}}<br>
+            </p>
 
             <!-- <form method="POST" action="" class="needs-validation" novalidate>  -> removing this to test server side rendering-->
             <form method="post" action="" class="" novalidate>
                 <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                <input type="hidden" name="start_date" value="{{$res.StartDate}}">
+                <input type="hidden" name="end_date" value="{{$res.EndDate}}">
+                <input type="hidden" name="room_id" value="{{$res.RoomID}}">
+
 
                 <div class="form-group mt-3">
                     <label for="first_name">First Name:</label>

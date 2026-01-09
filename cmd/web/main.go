@@ -4,6 +4,7 @@ import (
 	"encoding/gob"
 	"fmt"
 	"github.com/tjasha/Rooms-Bookings-System/internal/config"
+	"github.com/tjasha/Rooms-Bookings-System/internal/driver"
 	"github.com/tjasha/Rooms-Bookings-System/internal/handlers"
 	"github.com/tjasha/Rooms-Bookings-System/internal/helpers"
 	"github.com/tjasha/Rooms-Bookings-System/internal/models"
@@ -27,10 +28,12 @@ var errorLog *log.Logger
 
 func main() {
 
-	err := run()
+	db, err := run()
 	if err != nil {
 		log.Fatal(err)
 	}
+	//we're closing connection here not in the run()
+	defer db.SQL.Close()
 
 	fmt.Println(fmt.Sprintf("Starting application on port %s", portNumber))
 
@@ -46,11 +49,14 @@ func main() {
 	//log.Fatal(err)
 }
 
-func run() error {
+func run() (*driver.DB, error) {
 
 	//what can i put in the session - primitive types are already allowed
 	// we want to store reservation object
 	gob.Register(models.Reservation{})
+	gob.Register(models.Room{})
+	gob.Register(models.User{})
+	gob.Register(models.Restriction{})
 
 	//change this to true when in production, using it to define encription
 	app.InProduction = false
@@ -78,26 +84,40 @@ func run() error {
 
 	app.Session = session
 
+	//connect to database
+	log.Println("Connecting to DB")
+	db, err := driver.ConnectSQL("host=localhost port=5445 dbname=booking user=tjasaspes password=")
+
+	if err != nil {
+		log.Fatal("Cannot connect to database! Dying..")
+	}
+
+	log.Println("Connected to DB")
+
+	// in theory closing connection should be here, but if it is, it'll close connection just after opening
+	// for this reason, we return *driver.DB from the run()
+	//defer db.SQL.Close()
+
 	//i want to create template cache here
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Fatal(fmt.Printf("cannot create template cache %v", err))
-		return err
+		return nil, err
 	}
 
 	app.TemplateCache = tc
 	app.UseCache = false
 
 	//this give render access to appConfig
-	render.NewTemplates(&app)
+	render.NewRenderer(&app)
 
-	//create repository variable
-	repo := handlers.NewRepo(&app)
+	//create repository variable (app config and database connection)
+	repo := handlers.NewRepo(&app, db)
 	//create handlers and return variable back to handlers
 	handlers.NewHandlers(repo)
 
 	//this will populate app in helpers.go with app config
 	helpers.NewHelpers(&app)
 
-	return nil
+	return db, nil
 }

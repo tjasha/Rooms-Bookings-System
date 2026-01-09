@@ -33,15 +33,6 @@
             </form>
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-            <p>
-                <button id="colorButton" class="btn btn-outline-secondary">Click me</button>
-            </p>
-        </div>
-    </div>
-
-
 </div>
 
 
@@ -52,6 +43,7 @@
     const elem = document.getElementById('reservation-dates');
     const rangePicker = new DateRangePicker(elem, {
         format: "dd-mm-yyyy",
+        minDate: new Date(),
     });
 </script>
 {{end}}
