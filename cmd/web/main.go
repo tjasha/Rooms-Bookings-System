@@ -11,6 +11,7 @@ import (
 	"github.com/tjasha/Rooms-Bookings-System/internal/render"
 	"log"
 	"net/http"
+	"net/smtp"
 	"os"
 	"time"
 
@@ -34,6 +35,14 @@ func main() {
 	}
 	//we're closing connection here not in the run()
 	defer db.SQL.Close()
+
+	//build in option to send messages
+	from := "me@here.com"
+	auth := smtp.PlainAuth("", from, "", "localhost")
+	err = smtp.SendMail("localhost:1025", auth, from, []string{"you@there.com"}, []byte("This is the email body"))
+	if err != nil {
+		log.Println(err)
+	}
 
 	fmt.Println(fmt.Sprintf("Starting application on port %s", portNumber))
 
