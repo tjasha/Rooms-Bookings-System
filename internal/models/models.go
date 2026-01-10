@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 // by convenntion we change names in database first_name to FirstName
 // describes User table -> User model
@@ -48,7 +50,7 @@ type Reservation struct {
 	Room Room
 }
 
-// RoomRestriction is roomrestriction model
+// RoomRestriction is room restriction model
 type RoomRestriction struct {
 	ID            int
 	StartDate     time.Time
@@ -62,4 +64,12 @@ type RoomRestriction struct {
 	Room        Room
 	Reservation Reservation
 	Restriction Restriction
+}
+
+// MailData holds an email message
+type MailData struct {
+	To      string
+	From    string
+	Subject string
+	Content string
 }

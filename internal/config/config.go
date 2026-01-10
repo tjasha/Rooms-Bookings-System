@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/tjasha/Rooms-Bookings-System/internal/models"
 	"html/template"
 	"log"
 
@@ -18,4 +19,5 @@ type AppConfig struct {
 	ErrorLog      *log.Logger // to handle errors easier
 	InProduction  bool
 	Session       *scs.SessionManager
+	MailChan      chan models.MailData // creating channel that is available al the time from anywhere in the application.
 }

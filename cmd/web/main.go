@@ -11,7 +11,6 @@ import (
 	"github.com/tjasha/Rooms-Bookings-System/internal/render"
 	"log"
 	"net/http"
-	"net/smtp"
 	"os"
 	"time"
 
@@ -36,13 +35,20 @@ func main() {
 	//we're closing connection here not in the run()
 	defer db.SQL.Close()
 
-	//build in option to send messages
-	from := "me@here.com"
-	auth := smtp.PlainAuth("", from, "", "localhost")
-	err = smtp.SendMail("localhost:1025", auth, from, []string{"you@there.com"}, []byte("This is the email body"))
-	if err != nil {
-		log.Println(err)
+	// we're closing a channel here not in run()
+	defer close(app.MailChan)
+	// we start email messaging function
+	fmt.Println("Starting mail listener")
+	listenForMail()
+
+	msg := models.MailData{
+		To:      "john@go.ds",
+		From:    "me@gh.ds",
+		Subject: "some subject",
+		Content: "",
 	}
+	//send message to the channel
+	app.MailChan <- msg
 
 	fmt.Println(fmt.Sprintf("Starting application on port %s", portNumber))
 
@@ -66,6 +72,12 @@ func run() (*driver.DB, error) {
 	gob.Register(models.Room{})
 	gob.Register(models.User{})
 	gob.Register(models.Restriction{})
+
+	// creating a channel for listening for data type modals.MailData
+	mailChan := make(chan models.MailData)
+	// we need defer here, but if we do it here it will immediately close it.
+	// we save it to app.mailChan
+	app.MailChan = mailChan
 
 	//change this to true when in production, using it to define encription
 	app.InProduction = false
