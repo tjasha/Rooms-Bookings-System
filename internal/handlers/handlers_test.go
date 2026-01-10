@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
 )
@@ -133,42 +134,56 @@ func TestRepository_Reservation(t *testing.T) {
 
 // this test is currently failing because in the course it's reading all information from the form, but my
 // implementation is reading start date, end date and roomID from the session
-//func TestRepository_PostReservation(t *testing.T) {
-//
-//	// test for happy path
-//
-//	// create a POST request
-//	// we need to construct the body - a string - we're appending every field in the form
-//	//reqBody := "start_date=01-01-2050"
-//	//reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=02-01-2050")
-//	//reqBody = fmt.Sprintf("%s&%s", reqBody, "first_name=John")
-//	reqBody := "first_name=John"
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "last_name=Smith")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=john.Smith@gmail.com")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=555546465")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "room_id=1")
-//
-//	//we get a request to put this info in the session
-//	req, _ := http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
-//	//this context knows about the session
-//	ctx := getCtx(req)
-//	//passing context to the request
-//	req = req.WithContext(ctx)
-//
-//	//setting heder for request (good practice) - it tells that it's form POST request
-//	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-//
-//	rr := httptest.NewRecorder()
-//
-//	//create a function out of the handler
-//	handler := http.HandlerFunc(Repo.PostReservation)
-//	//now we can call the handler
-//	handler.ServeHTTP(rr, req)
-//
-//	if rr.Code != http.StatusSeeOther {
-//		t.Errorf("PostReservation handler returned wrong response code: got %d, wanted %d", rr.Code, http.StatusSeeOther)
-//	}
-//
+func TestRepository_PostReservation(t *testing.T) {
+
+	// test for happy path
+
+	// create a POST request
+	// we need to construct the body - a string - we're appending every field in the form
+	//reqBody := "start_date=01-01-2050"
+	//reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=02-01-2050")
+	//reqBody = fmt.Sprintf("%s&%s", reqBody, "first_name=John")
+
+	//reqBody := "first_name=John"
+	//reqBody = fmt.Sprintf("%s&%s", reqBody, "last_name=Smith")
+	//reqBody = fmt.Sprintf("%s&%s", reqBody, "email=john.Smith@gmail.com")
+	//reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=555546465")
+	//reqBody = fmt.Sprintf("%s&%s", reqBody, "room_id=1")
+	//
+	////we get a request to put this info in the session
+	//req, _ := http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
+
+	//simplifying post request
+	// creating empty url and add values instead of reqBody
+	postData := url.Values{}
+	postData.Add("first_name", "John")
+	postData.Add("last_name", "Smith")
+	postData.Add("email", "john.Smith@gmail.com")
+	postData.Add("phone", "555546465")
+	postData.Add("room_id", "1")
+
+	req, _ := http.NewRequest("POST", "/make-reservation", strings.NewReader(postData.Encode()))
+
+	//this context knows about the session
+	ctx := getCtx(req)
+	//passing context to the request
+	req = req.WithContext(ctx)
+
+	//setting heder for request (good practice) - it tells that it's form POST request
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	rr := httptest.NewRecorder()
+
+	//create a function out of the handler
+	handler := http.HandlerFunc(Repo.PostReservation)
+	//now we can call the handler
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusSeeOther {
+		t.Errorf("PostReservation handler returned wrong response code: got %d, wanted %d", rr.Code, http.StatusSeeOther)
+	}
+}
+
 //	// --------------------------------------------------------
 //	// test for missing POST body
 //
