@@ -15,11 +15,23 @@ func (m *testDBRepo) AllUsers() bool {
 }
 
 func (m *testDBRepo) InsertReservation(res models.Reservation) (int, error) {
+	// if the room id is 2, then fail, otherwise pass
+	if res.RoomID == 2 {
+		{
+			return 0, errors.New("test - insert reservation failed")
+		}
+	}
 	return 1, nil
 }
 
 // InsertRoomRestriction Inserts room restrictions into the database
 func (m *testDBRepo) InsertRoomRestriction(r models.RoomRestriction) error {
+	if r.RoomID == 1000 {
+		{
+			return errors.New("test - insert room restriction failed")
+		}
+	}
+
 	return nil
 }
 
