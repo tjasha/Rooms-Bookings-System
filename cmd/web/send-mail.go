@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"github.com/tjasha/Rooms-Bookings-System/internal/models"
 	mail "github.com/xhit/go-simple-mail/v2"
+	"io/ioutil"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -42,7 +45,21 @@ func sendMsg(m models.MailData) {
 	email := mail.NewMSG()
 	// setting from, to and subject
 	email.SetFrom(m.From).AddTo(m.To).SetSubject(m.Subject)
-	email.SetBody(mail.TextHTML, m.Content)
+	// if we specify template we use it, otherwise we use un-prettify version
+	if m.Template == "" {
+		email.SetBody(mail.TextHTML, m.Content)
+	} else {
+		// i want to read template from disk
+		data, err := ioutil.ReadFile(fmt.Sprintf("./email-templates/%s", m.Template))
+		if err != nil {
+			app.ErrorLog.Println(err)
+		}
+		// need to convert bytes f=to string
+		mailTemplate := string(data)
+		// looking for tag that we put in the template and replace it with content
+		msgToSend := strings.Replace(mailTemplate, "[%body%]", m.Content, 1)
+		email.SetBody(mail.TextHTML, msgToSend)
+	}
 
 	//sending email
 	err = email.Send(client)
