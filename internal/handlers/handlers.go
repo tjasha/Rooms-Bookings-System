@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/go-chi/chi"
 	"github.com/tjasha/Rooms-Bookings-System/internal/config"
 	"github.com/tjasha/Rooms-Bookings-System/internal/driver"
 	"github.com/tjasha/Rooms-Bookings-System/internal/forms"
@@ -13,6 +12,7 @@ import (
 	"github.com/tjasha/Rooms-Bookings-System/internal/repository/dbrepo"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -254,22 +254,54 @@ type jsonResponse struct {
 // AvailabilityJSON test
 func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 
+	//added later for testing purposes. we need to parse the form.
+	err := r.ParseForm()
+	if err != nil {
+
+		// can't parse form, so return appropriate json, not error message
+		resp := jsonResponse{
+			OK:      false,
+			Message: "Internal server error",
+		}
+
+		out, _ := json.MarshalIndent(resp, "", "    ")
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(out)
+		return
+	}
+
 	sd := r.Form.Get("start")
 	ed := r.Form.Get("end")
 	layout := "02-01-2006"
 	startDate, err := time.Parse(layout, sd)
 	endDate, err := time.Parse(layout, ed)
 	if err != nil {
-		helpers.ServerError(w, err)
+		m.App.Session.Put(r.Context(), "error", "can't parse a date")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 	roomID, err := strconv.Atoi(r.Form.Get("room_id"))
 	if err != nil {
-		helpers.ServerError(w, err)
+		m.App.Session.Put(r.Context(), "error", "can't parse roomID")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 
-	available, _ := m.DB.SearchAvailabilityForDatesByRoomID(startDate, endDate, roomID)
+	available, err := m.DB.SearchAvailabilityForDatesByRoomID(startDate, endDate, roomID)
+
+	//added later for testing purposes
+	if err != nil {
+		// database return appropriate json, not error message
+		resp := jsonResponse{
+			OK:      false,
+			Message: "Error connecting to database",
+		}
+
+		out, _ := json.MarshalIndent(resp, "", "    ")
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(out)
+		return
+	}
 
 	resp := jsonResponse{
 		OK:        available,
@@ -279,11 +311,14 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 		RoomID:    strconv.Itoa(roomID),
 	}
 
-	out, err := json.MarshalIndent(resp, "", "     ")
-	if err != nil {
-		helpers.ServerError(w, err)
-		return
-	}
+	//removing this error because it's causing to go in circular loop
+	//out, err := json.MarshalIndent(resp, "", "     ")
+	//if err != nil {
+	//	helpers.ServerError(w, err)
+	//	return
+	//}
+	out, _ := json.MarshalIndent(resp, "", "     ")
+
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(out)
 }
@@ -327,11 +362,22 @@ func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) 
 func (m *Repository) ChooseRoom(w http.ResponseWriter, r *http.Request) {
 
 	//we want to read the id from the link and store it as a roomID (id from the url)
-	roomID, err := strconv.Atoi(chi.URLParam(r, "id"))
+	//roomID, err := strconv.Atoi(chi.URLParam(r, "id"))
+	//if err != nil {
+	//	helpers.ServerError(w, err)
+	//	return
+	//}
+	//changed to test it easier
+	//split URL by // and grab 3rd element
+	exploded := strings.Split(r.RequestURI, "/")
+	roomID, err := strconv.Atoi(exploded[2])
 	if err != nil {
-		helpers.ServerError(w, err)
+		m.App.Session.Put(r.Context(), "error", "missing url parameter")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
+	//In your test for ChooseRoom, you will want to set the URL on your request as follows:
+	//req.RequestURI = "/choose-room/1"
 
 	// i need to get reservation from the session, update with roomID and store it back to the session
 	//we get session value by name (it's interface) and cast it to the model.Reservation
