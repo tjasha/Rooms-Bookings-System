@@ -472,6 +472,7 @@ func (m *Repository) ShowLogin(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// PostShowLogin handles logging the user in
 func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 
 	//prevent session fixation attack
@@ -488,8 +489,14 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 
 	form := forms.New(r.PostForm)
 	form.Required("email", "password")
+	form.IsEmail("email")
+
+	// we want to send user back to the form
 	if !form.Valid() {
-		// TODO - take user back to page
+		render.Template(w, r, "login.page.tmpl", &models.TemplateData{
+			Form: form,
+		})
+		return
 	}
 
 	// try to authenticate the user
