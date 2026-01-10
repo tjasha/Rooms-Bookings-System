@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/tjasha/Rooms-Bookings-System/internal/config"
 	"github.com/tjasha/Rooms-Bookings-System/internal/driver"
 	"github.com/tjasha/Rooms-Bookings-System/internal/forms"
@@ -166,6 +167,43 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
+
+	//send notifications
+
+	// notification to the guest
+	htmlMessage := fmt.Sprintf(`
+		<strong>Reservation confirmation</strong><br>
+		Dear %s %s, <br>
+		This is confirming your reservation in %s from %s to %s.
+`, reservation.FirstName, reservation.LastName, reservation.Room.RoomName,
+		reservation.StartDate.Format("02-01-2006"), reservation.EndDate.Format("02-01-2006"))
+
+	msg := models.MailData{
+		To:       reservation.Email,
+		From:     "me@gh.ds",
+		Subject:  "Reservation confirmation",
+		Content:  htmlMessage,
+		Template: "basic.html",
+	}
+	//send message to the channel
+	m.App.MailChan <- msg
+
+	//notification to the owner
+	htmlMessage = fmt.Sprintf(`
+		<strong>Reservation confirmation</strong><br>
+		This is confirming reservation for %s %s in %s from %s to %s.
+`, reservation.FirstName, reservation.LastName, reservation.Room.RoomName,
+		reservation.StartDate.Format("02-01-2006"), reservation.EndDate.Format("02-01-2006"))
+
+	msg = models.MailData{
+		To:       "owner@gh.ds",
+		From:     "me@gh.ds",
+		Subject:  "Reservation confirmation",
+		Content:  htmlMessage,
+		Template: "basic.html",
+	}
+	//send message to the channel
+	m.App.MailChan <- msg
 
 	// we put reservation object to the session
 	m.App.Session.Put(r.Context(), "reservation", reservation)

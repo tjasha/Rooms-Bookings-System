@@ -46,6 +46,14 @@ func TestMain(m *testing.M) {
 
 	app.Session = session
 
+	// we have to mock the functionality
+	//creating channel, and closing it
+	mailChan := make(chan models.MailData)
+	app.MailChan = mailChan
+	defer close(mailChan)
+	//creating function to listen to the channel
+	ListenForMail()
+
 	//i want to create template cache here
 	tc, err := CreateTestTemplateCache()
 	if err != nil {
@@ -63,6 +71,17 @@ func TestMain(m *testing.M) {
 	render.NewRenderer(&app)
 
 	os.Exit(m.Run())
+}
+
+// duplicting the function, but just not actually sending the mail
+func ListenForMail() {
+	go func() {
+		for {
+			// ignoring the message
+			_ = <-app.MailChan
+		}
+	}()
+
 }
 
 func getRoutes() http.Handler {
