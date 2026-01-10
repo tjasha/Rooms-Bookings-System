@@ -39,9 +39,21 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Post("/make-reservation", handlers.Repo.PostReservation)
 	mux.Get("/reservation-summary", handlers.Repo.ReservationSummary)
 
+	mux.Get("/user/login", handlers.Repo.ShowLogin)
+	mux.Post("/user/login", handlers.Repo.PostShowLogin)
+	mux.Get("/user/logout", handlers.Repo.Logout)
+
+	//file server
 	//where all our images are saved
 	fileServer := http.FileServer(http.Dir("./static/"))
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
+
+	// everything that starts with '/admin' is gonna be handled with this function
+	mux.Route("/admin", func(mux chi.Router) {
+		// all routes added here will use Auth middleware
+		mux.Use(Auth)
+		mux.Get("/dashboard", handlers.Repo.AdminDashboard)
+	})
 
 	return mux
 }
