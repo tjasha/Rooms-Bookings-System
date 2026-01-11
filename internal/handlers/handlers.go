@@ -729,6 +729,52 @@ func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Re
 
 	data["rooms"] = rooms
 
+	// we check this to have information how to show a calendar
+	for _, x := range rooms {
+		// create map for reservation
+		reservationMap := make(map[string]int)
+		//create a block map
+		blockMap := make(map[string]int)
+
+		//looping through dates
+		// looping from first of the month till last of the month. if it's not last day,
+		//add one day and do next iteration
+		for d := firstOfMonth; d.After(lastOfMonth) == false; d = d.AddDate(0, 0, 1) {
+			//this is initialising both maps with values 0
+			reservationMap[d.Format("2006-01-02")] = 0
+			blockMap[d.Format("2006-01-02")] = 0
+		}
+
+		// get all restrictions for current room
+		restrictions, err := m.DB.GetRestrictionsForRoomByDate(x.ID, firstOfMonth, lastOfMonth)
+		if err != nil {
+			helpers.ServerError(w, err)
+			return
+		}
+
+		//loop through restrictions and put proper data into reservations or blocked map
+		for _, y := range restrictions {
+			if y.ReservationID > 0 {
+				// it's a reservation, put it in reservation map
+				for d := y.StartDate; d.After(y.EndDate) == false; d = d.AddDate(0, 0, 1) {
+					reservationMap[d.Format("2006-01-02")] = y.ReservationID // using this to link it to reservation later
+				}
+			} else {
+				// it's a block, put it in block map
+				blockMap[y.StartDate.Format("2006-01-02")] = y.RestrictionID
+			}
+		}
+
+		//saving this data - reservationMap and blockMap has 0 if block/reservation doesn't exist
+		// or reservationId or restrictionId respectively
+		data[fmt.Sprintf("reservation_map_%d", x.ID)] = reservationMap
+		data[fmt.Sprintf("block_map_%d", x.ID)] = reservationMap
+
+		// store blockMap into session - this is necessary for aditing
+		m.App.Session.Put(r.Context(), fmt.Sprintf("block_map_%d", x.ID), blockMap)
+
+	}
+
 	render.Template(w, r, "admin-reservations-calendar.page.tmpl", &models.TemplateData{
 		StringMap: stringMap,
 		Data:      data,
