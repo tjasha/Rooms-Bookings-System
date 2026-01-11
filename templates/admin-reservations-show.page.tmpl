@@ -16,7 +16,7 @@ Reservation
 
     <form method="post" action="/admin/reservations/{{$src}}/{{$res.ID}}" class="" novalidate>
         <!--    <form method="post" action="" class="" novalidate>-->
-        <!--        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">-->
+                <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
                 <div class="form-group mt-3">
                     <label for="first_name">First Name:</label>
                     {{with .Form.Errors.Get "first_name"}}

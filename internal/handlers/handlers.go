@@ -567,7 +567,7 @@ func (m *Repository) AdminAllReservations(w http.ResponseWriter, r *http.Request
 // AdminShowReservation shows the reservation in the admin tool
 func (m *Repository) AdminShowReservation(w http.ResponseWriter, r *http.Request) {
 
-	// i need where the reservation came from (all or new page) and id of the reservation
+	// i need to know where the reservation came from (all or new page) and id of the reservation
 	// get url from request, splitting it by /
 	exploded := strings.Split(r.RequestURI, "/")
 	//"/admin/reservation/all/5" -> id is in position 4
@@ -592,12 +592,58 @@ func (m *Repository) AdminShowReservation(w http.ResponseWriter, r *http.Request
 	data := make(map[string]interface{})
 	data["reservation"] = res
 
+	log.Println("show reservation")
+
 	render.Template(w, r, "admin-reservations-show.page.tmpl", &models.TemplateData{
 		StringMap: stringMap,
 		Data:      data,
 		Form:      forms.New(nil), //to display it in form in admin-reservations-show.page.tmpl - to render the page
 	})
+}
 
+// AdminPostShowReservation handles posting of reservation form
+func (m *Repository) AdminPostShowReservation(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	// get url from request, splitting it by /
+	exploded := strings.Split(r.RequestURI, "/")
+	//"/admin/reservation/all/5" -> id is in position 4
+	id, err := strconv.Atoi(exploded[4])
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	src := exploded[3]
+	//we're adding src in the stringMap into the template
+	stringMap := make(map[string]string)
+	stringMap["src"] = src
+
+	//get reservation from DB
+	res, err := m.DB.GetReservationById(id)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	// in production you should add error checking here
+	res.FirstName = r.Form.Get("first_name")
+	res.LastName = r.Form.Get("last_name")
+	res.Email = r.Form.Get("email")
+	res.Phone = r.Form.Get("phone")
+
+	err = m.DB.UpdateReservation(res)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	m.App.Session.Put(r.Context(), "flash", "Changes saved")
+	http.Redirect(w, r, fmt.Sprintf("/admin/reservations-%s", src), http.StatusSeeOther)
 }
 
 // AdminReservationsCalendar display the reservation calendar
