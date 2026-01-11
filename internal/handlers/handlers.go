@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/go-chi/chi"
 	"github.com/tjasha/Rooms-Bookings-System/internal/config"
 	"github.com/tjasha/Rooms-Bookings-System/internal/driver"
 	"github.com/tjasha/Rooms-Bookings-System/internal/forms"
@@ -650,4 +651,18 @@ func (m *Repository) AdminPostShowReservation(w http.ResponseWriter, r *http.Req
 func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Request) {
 
 	render.Template(w, r, "admin-reservations-calendar.page.tmpl", &models.TemplateData{})
+}
+
+// AdminProcessReservation marks a reservation as processed
+func (m *Repository) AdminProcessReservation(w http.ResponseWriter, r *http.Request) {
+
+	id, _ := strconv.Atoi(chi.URLParam(r, "id"))
+	src := chi.URLParam(r, "src")
+
+	// update as processed - value 1
+	_ = m.DB.UpdateProcessedForReservation(id, 1)
+	// notify user that it's processed
+	m.App.Session.Put(r.Context(), "flash", "Reservation marked as processed")
+	// redirect to the same page as they came from
+	http.Redirect(w, r, fmt.Sprintf("/admin/reservations-%s", src), http.StatusSeeOther)
 }

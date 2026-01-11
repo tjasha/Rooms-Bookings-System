@@ -14,6 +14,10 @@
         <!-- plugin css for this page -->
         <!-- End plugin css for this page -->
         <!-- inject:css -->
+
+        <!--Notie - notification alert-->
+        <link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
+
         <link rel="stylesheet" href="/static/admin/css/style.css">
         <!-- endinject -->
         <link rel="shortcut icon" href="/static/admin/images/favicon.png"/>
@@ -24,6 +28,9 @@
             }
             label {
                 font-weight: bold;
+            }
+            .notie-container {
+                z-index: 5000;
             }
         </style>
         {{block "css" . }}
@@ -139,9 +146,51 @@
     <script src="/static/admin/js/template.js"></script>
     <script src="/static/admin/js/todolist.js"></script>
     <!-- endinject -->
+    <script src="https://unpkg.com/notie"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/static/js/app.js" ></script>
     <!-- Custom js for this page-->
     <script src="/static/admin/js/dashboard.js"></script>
     <!-- End custom js for this page-->
+
+<!--    Getting this from the base layout, to allow us to use prompts, notifications, etc-->
+    <script>
+
+        let attention = Prompt();
+
+        function notify(msg, msgType) {
+            notie.alert({
+                type: msgType, // optional, default = 4, enum: [1, 2, 3, 4, 5, 'success', 'warning', 'error', 'info', 'neutral']
+                text: msg,
+            })
+        }
+
+        function notifyModal(title, text, icon, confirmationButton) {
+            Swal.fire({
+                title: title,
+                html: text,
+                icon: icon,
+                confirmButtonText: confirmationButton
+            })
+        }
+
+        //general notification when there is error and we want to display it on any page
+        {{with .Error}}
+        notify("{{.}}", "error")
+        {{end}}
+
+        //general notification when i want to show success message on any page
+        {{with .Flash}}
+        notify("{{.}}", "success")
+        {{end}}
+
+        //general notification when i want to show warning message on any page
+        {{with .Warning}}
+        notify("{{.}}", "warning")
+        {{end}}
+    </script>
+
+
 
     {{block "js" . }}
 
