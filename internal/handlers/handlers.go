@@ -755,24 +755,23 @@ func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Re
 		//loop through restrictions and put proper data into reservations or blocked map
 		for _, y := range restrictions {
 			if y.ReservationID > 0 {
-				// it's a reservation, put it in reservation map
+				// since it's >0 it's a reservation, put it in reservation map
 				for d := y.StartDate; d.After(y.EndDate) == false; d = d.AddDate(0, 0, 1) {
 					reservationMap[d.Format("2006-01-02")] = y.ReservationID // using this to link it to reservation later
 				}
 			} else {
 				// it's a block, put it in block map
-				blockMap[y.StartDate.Format("2006-01-02")] = y.RestrictionID
+				blockMap[y.StartDate.Format("2006-01-02")] = y.ID
 			}
 		}
 
 		//saving this data - reservationMap and blockMap has 0 if block/reservation doesn't exist
 		// or reservationId or restrictionId respectively
 		data[fmt.Sprintf("reservation_map_%d", x.ID)] = reservationMap
-		data[fmt.Sprintf("block_map_%d", x.ID)] = reservationMap
+		data[fmt.Sprintf("block_map_%d", x.ID)] = blockMap
 
-		// store blockMap into session - this is necessary for aditing
+		// store blockMap into session - this is necessary for editing
 		m.App.Session.Put(r.Context(), fmt.Sprintf("block_map_%d", x.ID), blockMap)
-
 	}
 
 	render.Template(w, r, "admin-reservations-calendar.page.tmpl", &models.TemplateData{
