@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// listing all functions that we need in handlers
+// listing all functions connected to DB that we need in handlers
 type DatabaseRepo interface {
 	AllUsers() bool
 
@@ -28,4 +28,6 @@ type DatabaseRepo interface {
 	AllReservations() ([]models.Reservation, error)
 
 	AllNewReservations() ([]models.Reservation, error)
+
+	GetReservationById(id int) (models.Reservation, error)
 }
