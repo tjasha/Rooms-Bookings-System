@@ -645,12 +645,6 @@ func (m *Repository) AdminPostShowReservation(w http.ResponseWriter, r *http.Req
 	http.Redirect(w, r, fmt.Sprintf("/admin/reservations-%s", src), http.StatusSeeOther)
 }
 
-// AdminReservationsCalendar display the reservation calendar
-func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Request) {
-
-	render.Template(w, r, "admin-reservations-calendar.page.tmpl", &models.TemplateData{})
-}
-
 // AdminProcessReservation marks a reservation as processed
 func (m *Repository) AdminProcessReservation(w http.ResponseWriter, r *http.Request) {
 
@@ -677,4 +671,45 @@ func (m *Repository) AdminDeleteReservation(w http.ResponseWriter, r *http.Reque
 	m.App.Session.Put(r.Context(), "flash", "Reservation deleted")
 	// redirect to the same page as they came from
 	http.Redirect(w, r, fmt.Sprintf("/admin/reservations-%s", src), http.StatusSeeOther)
+}
+
+// AdminReservationsCalendar display the reservation calendar
+func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Request) {
+
+	// assume that there's no month or year specified --> we want to show  today
+	now := time.Now()
+
+	// we want to have url with parameters /?y=2006&m=3
+	// if the parameters exist, we want to reset now to this time
+	if r.URL.Query().Get("y") != "" {
+		year, _ := strconv.Atoi(r.URL.Query().Get("y"))
+		month, _ := strconv.Atoi(r.URL.Query().Get("m"))
+		now = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
+	}
+
+	// how many years, months and days i want to add
+	next := now.AddDate(0, 1, 0)
+	// we don't substract, we use -value
+	last := now.AddDate(0, -1, 0)
+
+	// we need to format dates now --> golang formating
+	// i want to get month
+	nextMonth := next.Format("01")
+	// year next month
+	nextMonthYear := next.Format("2006")
+	lastMonth := last.Format("01")
+	lastMonthYear := last.Format("2006")
+
+	stringMap := make(map[string]string)
+	stringMap["next_month"] = nextMonth
+	stringMap["next_month_year"] = nextMonthYear
+	stringMap["last_month"] = lastMonth
+	stringMap["last_month_year"] = lastMonthYear
+
+	stringMap["this_month"] = now.Format("01")
+	stringMap["this_year"] = now.Format("2006")
+
+	render.Template(w, r, "admin-reservations-calendar.page.tmpl", &models.TemplateData{
+		StringMap: stringMap,
+	})
 }
