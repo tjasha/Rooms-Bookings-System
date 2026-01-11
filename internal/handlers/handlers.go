@@ -687,6 +687,9 @@ func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Re
 		now = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
 	}
 
+	data := make(map[string]interface{})
+	data["now"] = now
+
 	// how many years, months and days i want to add
 	next := now.AddDate(0, 1, 0)
 	// we don't substract, we use -value
@@ -709,7 +712,26 @@ func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Re
 	stringMap["this_month"] = now.Format("01")
 	stringMap["this_year"] = now.Format("2006")
 
+	// get teh first and last days of the month
+	currentYear, currentMonth, _ := now.Date()
+	currentLocation := now.Location()
+	firstOfMonth := time.Date(currentYear, currentMonth, 1, 0, 0, 0, 0, currentLocation)
+	lastOfMonth := firstOfMonth.AddDate(0, 1, -1) // add one month and remove a day
+
+	intMap := make(map[string]int)
+	intMap["days_in_month"] = lastOfMonth.Day() // number of days in the month
+
+	rooms, err := m.DB.AllRooms()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	data["rooms"] = rooms
+
 	render.Template(w, r, "admin-reservations-calendar.page.tmpl", &models.TemplateData{
 		StringMap: stringMap,
+		Data:      data,
+		IntMap:    intMap,
 	})
 }
