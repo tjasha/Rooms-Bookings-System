@@ -51,7 +51,7 @@ func routes(app *config.AppConfig) http.Handler {
 	// everything that starts with '/admin' is gonna be handled with this function
 	mux.Route("/admin", func(mux chi.Router) {
 		// all routes added here will use Auth middleware
-		mux.Use(Auth)
+		//mux.Use(Auth) disabled for developing purposes
 		mux.Get("/dashboard", handlers.Repo.AdminDashboard)
 
 		mux.Get("/reservations-new", handlers.Repo.AdminNewReservations)
