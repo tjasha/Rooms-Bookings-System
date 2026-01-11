@@ -593,8 +593,6 @@ func (m *Repository) AdminShowReservation(w http.ResponseWriter, r *http.Request
 	data := make(map[string]interface{})
 	data["reservation"] = res
 
-	log.Println("show reservation")
-
 	render.Template(w, r, "admin-reservations-show.page.tmpl", &models.TemplateData{
 		StringMap: stringMap,
 		Data:      data,
@@ -663,6 +661,20 @@ func (m *Repository) AdminProcessReservation(w http.ResponseWriter, r *http.Requ
 	_ = m.DB.UpdateProcessedForReservation(id, 1)
 	// notify user that it's processed
 	m.App.Session.Put(r.Context(), "flash", "Reservation marked as processed")
+	// redirect to the same page as they came from
+	http.Redirect(w, r, fmt.Sprintf("/admin/reservations-%s", src), http.StatusSeeOther)
+}
+
+// AdminProcessReservation marks a reservation as processed
+func (m *Repository) AdminDeleteReservation(w http.ResponseWriter, r *http.Request) {
+
+	id, _ := strconv.Atoi(chi.URLParam(r, "id"))
+	src := chi.URLParam(r, "src")
+
+	// delete reservation with id
+	_ = m.DB.DeleteReservation(id)
+	// notify user that it's deleted
+	m.App.Session.Put(r.Context(), "flash", "Reservation deleted")
 	// redirect to the same page as they came from
 	http.Redirect(w, r, fmt.Sprintf("/admin/reservations-%s", src), http.StatusSeeOther)
 }

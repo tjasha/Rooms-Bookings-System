@@ -60,6 +60,8 @@ Reservation
                 </div>
 
                 <br>
+
+            <div class="float-start">
                 <!-- Save button-->
                 <input type="submit" class="btn btn-primary" value="Save">
                 <!-- Cancel button-->
@@ -67,6 +69,13 @@ Reservation
                 <!-- Mark as processed button-->
                 <a href="#!" class="btn btn-info" onclick="processRes({{$res.ID}})">Mark as processed</a>
 
+            </div>
+            <div class="float-end">
+                <!-- Deletes reservation-->
+                <a href="#!" class="btn btn-danger" onclick="deleteRes({{$res.ID}})">Delete</a>
+            </div>
+            <!-- this clears floating in bootstrap -->
+            <div class="clearfix"></div>
     </form>
 </div>
 {{end}}
@@ -86,6 +95,21 @@ Reservation
             }
         })
     }
+
+    function deleteRes(id) {
+        attention.custom({
+            icon: 'warning',
+            msg: 'Are you sure?',
+            callback: function (result) {
+                if (result !== false){
+                    // if user clicks on ok, it should take them to this URL
+                    window.location.href = "/admin/delete-reservation/{{$src}}/" + id;
+                }
+            }
+        })
+    }
+
+
 </script>
 
 {{end}}
