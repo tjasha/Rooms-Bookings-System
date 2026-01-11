@@ -9,7 +9,7 @@ Reservations calendar
     {{$rooms := index .Data "rooms"}}
     {{$dim := index .IntMap "days_in_month"}}
     {{$curMonth := index .StringMap "this_month"}}
-    {{$curYear := index .StringMap "this_month_year"}}
+    {{$curYear := index .StringMap "this_year"}}
 
     <div class="col-md-12">
 
@@ -32,13 +32,18 @@ Reservations calendar
 
         {{range $rooms}}
             {{$roomID := .ID}}
+            <!-- we want data for every day, but this data is outside of range. for this, we
+             can use '$.Data'. To put this variable into the value, we can use
+             printf function and %d for placeholder -->
+            {{$blocks := index $.Data (printf "block_map_%d" .ID)}}
+            {{$reservations := index $.Data (printf "reservation_map_%d" .ID)}}
 
             <h4 class="mt-4">{{.RoomName}}</h4>
 
             <div class="table-responsive">
                 <table class="table table-bordered table-sm">
                     <tr class="table-light">
-                        <!--we want to iterate through date of the month-->
+                        <!--we want to iterate through dates of the month-->
                         {{range $index := iterate $dim}}
                             <td class="text-center">
                                 {{add $index 1}}
@@ -49,7 +54,15 @@ Reservations calendar
                     <tr class="text-center">
                         {{range $index := iterate $dim}}
                         <td class="text-center">
-                            <input type="checkbox">
+                            <input
+                                    {{if gt (index $blocks (printf "%s-%s-%d" $curYear $curMonth (add $index 1))) 0 }}
+                                        checked
+                                        name="remove_block_{{$roomID}}_{{printf "%s-%s-%d" $curYear $curMonth (add $index 1)}}"
+                                        value="{{index $blocks (printf "%s-%s-%d" $curYear $curMonth (add $index 1))}}"
+                            {{else}}
+                                name="add_block_{{$roomID}}_{{printf "%s-%s-%d" $curYear $curMonth (add $index 1)}}"
+                            {{end}}
+                            type="checkbox">
                         </td>
                         {{end}}
                     </tr>
