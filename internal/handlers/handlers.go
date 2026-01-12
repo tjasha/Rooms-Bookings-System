@@ -793,6 +793,57 @@ func (m *Repository) AdminPostReservationsCalendar(w http.ResponseWriter, r *htt
 	month, _ := strconv.Atoi(r.Form.Get("m"))
 
 	//process blocks
+	//re need both rooms
+	rooms, err := m.DB.AllRooms()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	// to check if posted for has a field later on
+	form := forms.New(r.PostForm)
+
+	for _, x := range rooms {
+		//Get the block map from the session --> this is before user changed anything.
+		//Loop through the entire map, if the restriction id > 0, then it is a block
+		// we need to remove from the map.
+
+		// we get the block map from the session and cast it into map[string]int
+		curMap := m.App.Session.Get(r.Context(), fmt.Sprintf("block_map_%d", x.ID)).(map[string]int)
+		for name, value := range curMap {
+			// make sure that entry exist in the map and the value is not 0
+			// ok will be false if the value is not in the map
+			if val, ok := curMap[name]; ok {
+				// only pay attention to value > 0, and that are not in the form post - they've been unchecked
+				// the rest are just placeholders for days without blocks
+				if val > 0 {
+					if !form.Has(fmt.Sprintf("remove_block_%d_%s", x.ID, name)) {
+						// delete the restriction by id
+						//err := m.DB.DeleteBlockByID(value)
+						log.Println("would delete block", value)
+					}
+
+				}
+
+			}
+		}
+	}
+
+	// handle new blocks
+	//loop for entire post form and look for any entrier with name starting with block
+	for name, _ := range r.PostForm {
+		// it only include data that are having checkbox checked
+		//log.Println("Form has name", name)
+		//if posted form has and item starting with add_block ( it's gonna be in format add_block_'roomID'_'date'
+		if strings.HasPrefix(name, "add_block") {
+			exploded := strings.Split(name, "_")
+			roomID, _ := strconv.Atoi(exploded[2])
+			t, _ := time.Parse("2006-01-2", exploded[3])
+			// insert a new block
+			log.Println("Inserting block for", roomID, "on", t)
+
+		}
+	}
 
 	m.App.Session.Put(r.Context(), "flash", "Changes saved")
 	http.Redirect(w, r, fmt.Sprintf("/admin/reservations-calendar?y=%d&m=%d", year, month), http.StatusSeeOther)
