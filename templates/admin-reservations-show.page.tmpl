@@ -17,6 +17,12 @@ Reservation
     <form method="post" action="/admin/reservations/{{$src}}/{{$res.ID}}" class="" novalidate>
         <!--    <form method="post" action="" class="" novalidate>-->
                 <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                <!--this two fields are to be redirected back to the correct months in the calendar-->
+                <input type="hidden" name="year" value="{{index .StringMap "year"}}">
+                <input type="hidden" name="month" value="{{index .StringMap "month"}}">
+
+
+
                 <div class="form-group mt-3">
                     <label for="first_name">First Name:</label>
                     {{with .Form.Errors.Get "first_name"}}
@@ -65,15 +71,17 @@ Reservation
                 <!-- Save button-->
                 <input type="submit" class="btn btn-primary" value="Save">
                 <!-- Cancel button-->
-                {{if eq $src "cal"}}
+                {{if eq $src "calendar"}}
 <!--                    we move back in the browser history to the calendar view-->
                     <a href="#!" onclick="window.history.back()" class="btn btn-warning">Cancel</a>
                 {{else}}
                 <a href="/admin/reservations-{{$src}}" class="btn btn-warning">Cancel</a>
                 {{end}}
-                <!-- Mark as processed button-->
-                <a href="#!" class="btn btn-info" onclick="processRes({{$res.ID}})">Mark as processed</a>
-
+                <!--Showing it only if reservation is not processed yet-->
+                {{if eq $res.Processed 0}}
+                    <!-- Mark as processed button-->
+                    <a href="#!" class="btn btn-info" onclick="processRes({{$res.ID}})">Mark as processed</a>
+                {{end}}
             </div>
             <div class="float-end">
                 <!-- Deletes reservation-->
@@ -95,7 +103,8 @@ Reservation
             callback: function (result) {
                 if (result !== false){
                     // if user clicks on ok, it should take them to this URL
-                    window.location.href = "/admin/process-reservation/{{$src}}/" + id;
+                    window.location.href = "/admin/process-reservation/{{$src}}/" + id +
+                        "/do?y={{index .StringMap "year"}}&m={{index .StringMap "month"}}";
                 }
             }
         })
@@ -108,7 +117,8 @@ Reservation
             callback: function (result) {
                 if (result !== false){
                     // if user clicks on ok, it should take them to this URL
-                    window.location.href = "/admin/delete-reservation/{{$src}}/" + id;
+                    window.location.href = "/admin/delete-reservation/{{$src}}/" + id +
+                        "/do?y={{index .StringMap "year"}}&m={{index .StringMap "month"}}";
                 }
             }
         })
