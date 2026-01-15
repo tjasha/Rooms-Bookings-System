@@ -712,7 +712,7 @@ func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Re
 	stringMap["this_month"] = now.Format("01")
 	stringMap["this_year"] = now.Format("2006")
 
-	// get teh first and last days of the month
+	// get the first and last days of the month
 	currentYear, currentMonth, _ := now.Date()
 	currentLocation := now.Location()
 	firstOfMonth := time.Date(currentYear, currentMonth, 1, 0, 0, 0, 0, currentLocation)
@@ -755,7 +755,7 @@ func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Re
 		//loop through restrictions and put proper data into reservations or blocked map
 		for _, y := range restrictions {
 			if y.ReservationID > 0 {
-				// since it's >0 it's a reservation, put it in reservation map
+				// since it's > 0 it's a reservation, put it in reservation map
 				for d := y.StartDate; d.After(y.EndDate) == false; d = d.AddDate(0, 0, 1) {
 					reservationMap[d.Format("2006-01-02")] = y.ReservationID // using this to link it to reservation later
 				}
@@ -819,8 +819,11 @@ func (m *Repository) AdminPostReservationsCalendar(w http.ResponseWriter, r *htt
 				if val > 0 {
 					if !form.Has(fmt.Sprintf("remove_block_%d_%s", x.ID, name)) {
 						// delete the restriction by id
-						//err := m.DB.DeleteBlockByID(value)
 						log.Println("would delete block", value)
+						err := m.DB.DeleteBlockByID(value)
+						if err != nil {
+							log.Println(err)
+						}
 					}
 
 				}
@@ -841,7 +844,10 @@ func (m *Repository) AdminPostReservationsCalendar(w http.ResponseWriter, r *htt
 			t, _ := time.Parse("2006-01-2", exploded[3])
 			// insert a new block
 			log.Println("Inserting block for", roomID, "on", t)
-
+			err := m.DB.InsertBlockForRoom(roomID, t)
+			if err != nil {
+				log.Println(err)
+			}
 		}
 	}
 
