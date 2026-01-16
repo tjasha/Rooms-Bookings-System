@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/gob"
+	"flag"
 	"fmt"
 	"github.com/tjasha/Rooms-Bookings-System/internal/config"
 	"github.com/tjasha/Rooms-Bookings-System/internal/driver"
@@ -71,8 +72,30 @@ func run() (*driver.DB, error) {
 	// we save it to app.mailChan
 	app.MailChan = mailChan
 
-	//change this to true when in production, using it to define encription
-	app.InProduction = false
+	// read flags
+	//they are all pointers
+	// defining is application is in production. default is true
+	inProduction := flag.Bool("production", true, "Application is in production")
+	// define cash, default is true
+	useCache := flag.Bool("cache", true, "Usea template cache")
+	// DB info
+	dbHost := flag.String("dbhost", "localhost", "Database host")
+	dbName := flag.String("dbname", "", "Database name")
+	dbUser := flag.String("dbuser", "", "Database user")
+	dbPass := flag.String("dbpass", "", "Database password")
+	dbPort := flag.String("dbport", "5445", "Database port")
+	dbSSL := flag.String("dbssl", "disable", "Database ssl settings (disable, prefer, require)")
+
+	// this is actually parsing the flags and make it usable
+	flag.Parse()
+	if *dbName == "" || *dbUser == "" {
+		fmt.Println("Missing required flags")
+		os.Exit(1)
+	}
+
+	// this is read from the flag
+	app.InProduction = *inProduction
+	app.UseCache = *useCache
 
 	//Stdout = standart out = terminal window
 	//prefix to all of this logs is INFO
@@ -99,7 +122,10 @@ func run() (*driver.DB, error) {
 
 	//connect to database
 	log.Println("Connecting to DB")
-	db, err := driver.ConnectSQL("host=localhost port=5445 dbname=booking user=tjasaspes password=")
+	//db, err := driver.ConnectSQL("host=localhost port=5445 dbname=booking user=tjasaspes password=")
+	//getting all information from the flag
+	connectionString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=%s", *dbHost, *dbPort, *dbName, *dbUser, *dbPass, *dbSSL)
+	db, err := driver.ConnectSQL(connectionString)
 
 	if err != nil {
 		log.Fatal("Cannot connect to database! Dying..")
@@ -119,7 +145,7 @@ func run() (*driver.DB, error) {
 	}
 
 	app.TemplateCache = tc
-	app.UseCache = false
+	//app.UseCache = false // we read it from the flag
 
 	//this give render access to appConfig
 	render.NewRenderer(&app)
