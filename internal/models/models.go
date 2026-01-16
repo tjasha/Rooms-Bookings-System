@@ -45,6 +45,7 @@ type Reservation struct {
 	RoomID    int
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	Processed int
 	//we can add additional information
 	//here we add information about the Room, as it's connected
 	Room Room

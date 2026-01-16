@@ -19,7 +19,7 @@ func NewHelpers(a *config.AppConfig) {
 // errors on client side
 func ClientError(w http.ResponseWriter, status int) {
 	//we can put info to the info log
-	app.InfoLog.Println("Client error with star=tus of", status)
+	app.InfoLog.Println("Client error with status of", status)
 	// we want to return something to the user
 	http.Error(w, http.StatusText(status), status)
 }

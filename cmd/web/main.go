@@ -63,6 +63,7 @@ func run() (*driver.DB, error) {
 	gob.Register(models.Room{})
 	gob.Register(models.User{})
 	gob.Register(models.Restriction{})
+	gob.Register(map[string]int{}) //these are restriction maps
 
 	// creating a channel for listening for data type modals.MailData
 	mailChan := make(chan models.MailData)

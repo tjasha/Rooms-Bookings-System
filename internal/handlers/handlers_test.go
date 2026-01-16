@@ -2,10 +2,13 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"github.com/tjasha/Rooms-Bookings-System/internal/models"
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
+	"strings"
 	"testing"
 )
 
@@ -27,6 +30,21 @@ var theTests = []struct {
 	{"search-availability", "/search-availability", "GET", http.StatusOK},
 	{"contact", "/contact", "GET", http.StatusOK},
 	{"make-reservation", "/make-reservation", "GET", http.StatusOK},
+	{"non-exister root", "/green/random/path", "GET", http.StatusNotFound},
+
+	// new routes
+	{"login", "/user/login", "GET", http.StatusOK},
+	{"logout", "/user/logout", "GET", http.StatusOK},
+	{"dashboard", "/admin/dashboard", "GET", http.StatusOK},
+
+	{"new reservations", "/admin/reservations-new", "GET", http.StatusOK},
+	{"all reservations", "/admin/reservations-all", "GET", http.StatusOK},
+	{"reservations calendar", "/admin/reservations-calendar", "GET", http.StatusOK},
+
+	{"process reservation", "/admin/process-reservation/new/1/do", "GET", http.StatusOK},
+	{"delete reservation", "/admin/delete-reservation/all/1/do", "GET", http.StatusOK},
+
+	{"show reservation", "/admin/reservations/new/1/show", "GET", http.StatusOK},
 
 	//{"post-search-availability", "/search-availability", "POST", []postData{
 	//	{key: "start", value: "02-01-2026"},
@@ -105,8 +123,8 @@ func TestRepository_Reservation(t *testing.T) {
 	rr = httptest.NewRecorder()
 	handler.ServeHTTP(rr, req)
 
-	if rr.Code != http.StatusTemporaryRedirect {
-		t.Errorf("Reservation handler returned wrong response code: got %d, wanted %d", rr.Code, http.StatusTemporaryRedirect)
+	if rr.Code != http.StatusSeeOther {
+		t.Errorf("Reservation handler returned wrong response code: got %d, wanted %d", rr.Code, http.StatusSeeOther)
 	}
 
 	// test case where there is no room in reservation the session
@@ -122,8 +140,8 @@ func TestRepository_Reservation(t *testing.T) {
 	session.Put(ctx, "reservation", reservation)
 
 	handler.ServeHTTP(rr, req)
-	if rr.Code != http.StatusTemporaryRedirect {
-		t.Errorf("Reservation handler returned wrong response code: got %d, wanted %d", rr.Code, http.StatusTemporaryRedirect)
+	if rr.Code != http.StatusSeeOther {
+		t.Errorf("Reservation handler returned wrong response code: got %d, wanted %d", rr.Code, http.StatusSeeOther)
 	}
 
 }
@@ -132,288 +150,288 @@ func TestRepository_Reservation(t *testing.T) {
 // implementation is reading start date, end date and roomID from the session
 func TestRepository_PostReservation(t *testing.T) {
 
-	// test for happy path
-
-	// create a POST request
-	// we need to construct the body - a string - we're appending every field in the form
-	//reqBody := "start_date=01-01-2050"
-	//reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=02-01-2050")
-	//reqBody = fmt.Sprintf("%s&%s", reqBody, "first_name=John")
-
-	//reqBody := "first_name=John"
-	//reqBody = fmt.Sprintf("%s&%s", reqBody, "last_name=Smith")
-	//reqBody = fmt.Sprintf("%s&%s", reqBody, "email=john.Smith@gmail.com")
-	//reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=555546465")
-	//reqBody = fmt.Sprintf("%s&%s", reqBody, "room_id=1")
+	//test for happy path
 	//
-	////we get a request to put this info in the session
-	//req, _ := http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
+	//create a POST request
+	//we need to construct the body - a string - we're appending every field in the form
+	reqBody := "start_date=01-01-2050"
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=02-01-2050")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "first_name=John")
+
+	reqBody = "first_name=John"
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "last_name=Smith")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=john.Smith@gmail.com")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=555546465")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "room_id=1")
+
+	//we get a request to put this info in the session
+	req, _ := http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
 
 	//simplifying post request
-	// creating empty url and add values instead of reqBody
-	//postData := url.Values{}
-	//postData.Add("first_name", "John")
-	//postData.Add("last_name", "Smith")
-	//postData.Add("email", "john.Smith@gmail.com")
-	//postData.Add("phone", "555546465")
-	//postData.Add("room_id", "1")
-	//
-	//req, _ := http.NewRequest("POST", "/make-reservation", strings.NewReader(postData.Encode()))
-	//
-	////this context knows about the session
-	//ctx := getCtx(req)
-	////passing context to the request
-	//req = req.WithContext(ctx)
-	//
-	////setting heder for request (good practice) - it tells that it's form POST request
-	//req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	//
-	//rr := httptest.NewRecorder()
-	//
-	////create a function out of the handler
-	//handler := http.HandlerFunc(Repo.PostReservation)
-	////now we can call the handler
-	//handler.ServeHTTP(rr, req)
-	//
-	//if rr.Code != http.StatusSeeOther {
-	//	t.Errorf("PostReservation handler returned wrong response code: got %d, wanted %d", rr.Code, http.StatusSeeOther)
-	//}
+	//creating empty url and add values instead of reqBody
+	postData := url.Values{}
+	postData.Add("first_name", "John")
+	postData.Add("last_name", "Smith")
+	postData.Add("email", "john.Smith@gmail.com")
+	postData.Add("phone", "555546465")
+	postData.Add("room_id", "1")
+
+	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(postData.Encode()))
+
+	//this context knows about the session
+	ctx := getCtx(req)
+	//passing context to the request
+	req = req.WithContext(ctx)
+
+	//setting heder for request (good practice) - it tells that it's form POST request
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	rr := httptest.NewRecorder()
+
+	//create a function out of the handler
+	handler := http.HandlerFunc(Repo.PostReservation)
+	//now we can call the handler
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusSeeOther {
+		t.Errorf("PostReservation handler returned wrong response code: got %d, wanted %d", rr.Code, http.StatusSeeOther)
+	}
+
+	// --------------------------------------------------------
+	// test for missing POST body
+
+	//we get a request to put this info in the session - empty body
+	req, _ = http.NewRequest("POST", "/make-reservation", nil)
+	//reusing the context
+	ctx = getCtx(req)
+	req = req.WithContext(ctx)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	rr = httptest.NewRecorder()
+	//create a function out of the handler
+	handler = http.HandlerFunc(Repo.PostReservation)
+	//now we can call the handler
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusSeeOther {
+		t.Errorf("PostReservation handler returned wrong response code for missing post body: got %d, wanted %d", rr.Code, http.StatusSeeOther)
+	}
+
+	// --------------------------------------------------------
+	// test for invalid start date
+	// create a POST request with invalid start date
+	// we need to construct the body - a string - we're appending every field in the form
+	reqBody = "start_date=invalid"
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=02-01-2050")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "first_name=John")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "last_name=Smith")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=john.Smith@gmail.com")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=555546465")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "room_id=1")
+
+	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
+	ctx = getCtx(req)
+	req = req.WithContext(ctx)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	rr = httptest.NewRecorder()
+
+	handler = http.HandlerFunc(Repo.PostReservation)
+	//now we can call the handler
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusSeeOther {
+		t.Errorf("PostReservation handler returned wrong response code for invalid start date: got %d, wanted %d", rr.Code, http.StatusSeeOther)
+	}
+
+	// --------------------------------------------------------
+	// test for invalid end date
+	// create a POST request with invalid end date
+	// we need to construct the body - a string - we're appending every field in the form
+	reqBody = "start_date=02-01-2050"
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=invalid")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "first_name=John")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "last_name=Smith")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=john.Smith@gmail.com")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=555546465")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "room_id=1")
+
+	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
+	ctx = getCtx(req)
+	req = req.WithContext(ctx)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	rr = httptest.NewRecorder()
+
+	handler = http.HandlerFunc(Repo.PostReservation)
+	//now we can call the handler
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusSeeOther {
+		t.Errorf("PostReservation handler returned wrong response code for invalid end date: got %d, wanted %d", rr.Code, http.StatusSeeOther)
+	}
+
+	// --------------------------------------------------------
+	// test for invalid end date
+	// create a POST request with invalid room id
+	// we need to construct the body - a string - we're appending every field in the form
+	reqBody = "start_date=01-01-2050"
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=02-01-2050")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "first_name=John")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "last_name=Smith")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=john.Smith@gmail.com")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=555546465")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "room_id=invalid")
+
+	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
+	ctx = getCtx(req)
+	req = req.WithContext(ctx)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	rr = httptest.NewRecorder()
+
+	handler = http.HandlerFunc(Repo.PostReservation)
+	//now we can call the handler
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusSeeOther {
+		t.Errorf("PostReservation handler returned wrong response code for invalid room ID: got %d, wanted %d", rr.Code, http.StatusSeeOther)
+	}
+
+	// --------------------------------------------------------
+	// test for invalid data
+	// create a POST request with invalid first name - fails validation
+	// we need to construct the body - a string - we're appending every field in the form
+	reqBody = "start_date=01-01-2050"
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=02-01-2050")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "first_name=J")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "last_name=Smith")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=john.Smith@gmail.com")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=555546465")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "room_id=1")
+
+	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
+	ctx = getCtx(req)
+	req = req.WithContext(ctx)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	rr = httptest.NewRecorder()
+
+	handler = http.HandlerFunc(Repo.PostReservation)
+	//now we can call the handler
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusSeeOther {
+		t.Errorf("PostReservation handler returned wrong response code for invalid data: got %d, wanted %d", rr.Code, http.StatusSeeOther)
+	}
+
+	// --------------------------------------------------------
+	// test for failure to insert reservation in database
+	// create a POST request with room id 2 - failing reservation insert
+	// we need to construct the body - a string - we're appending every field in the form
+	reqBody = "start_date=01-01-2050"
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=02-01-2050")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "first_name=John")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "last_name=Smith")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=john.Smith@gmail.com")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=555546465")
+	// this is gonna fail the test - it's set in test-repo
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "room_id=2")
+
+	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
+	ctx = getCtx(req)
+	req = req.WithContext(ctx)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	rr = httptest.NewRecorder()
+
+	handler = http.HandlerFunc(Repo.PostReservation)
+	//now we can call the handler
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusSeeOther {
+		t.Errorf("PostReservation handler failed when trying to fail inserting reservation: got %d, wanted %d", rr.Code, http.StatusSeeOther)
+	}
+
+	// --------------------------------------------------------
+	// test for failure to insert room restriction in database
+	// create a POST request with room id 1000
+	reqBody = "start_date=01-01-2050"
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=02-01-2050")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "first_name=John")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "last_name=Smith")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=john.Smith@gmail.com")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=555546465")
+	// this is gonna fail the test - it's set in test-repo
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "room_id=1000")
+
+	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
+	ctx = getCtx(req)
+	req = req.WithContext(ctx)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	rr = httptest.NewRecorder()
+
+	handler = http.HandlerFunc(Repo.PostReservation)
+	//now we can call the handler
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusSeeOther {
+		t.Errorf("PostReservation handler failed when trying to fail inserting restriction: got %d, wanted %d", rr.Code, http.StatusSeeOther)
+	}
 }
 
-//	// --------------------------------------------------------
-//	// test for missing POST body
 //
-//	//we get a request to put this info in the session - empty body
-//	req, _ = http.NewRequest("POST", "/make-reservation", nil)
-//	//reusing the context
-//	ctx = getCtx(req)
-//	req = req.WithContext(ctx)
-//	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-//
-//	rr = httptest.NewRecorder()
-//	//create a function out of the handler
-//	handler = http.HandlerFunc(Repo.PostReservation)
-//	//now we can call the handler
-//	handler.ServeHTTP(rr, req)
-//
-//	if rr.Code != http.StatusTemporaryRedirect {
-//		t.Errorf("PostReservation handler returned wrong response code for missing post body: got %d, wanted %d", rr.Code, http.StatusTemporaryRedirect)
-//	}
-//
-//	// --------------------------------------------------------
-//	// test for invalid start date
-//	// create a POST request with invalid start date
-//	// we need to construct the body - a string - we're appending every field in the form
-//	reqBody = "start_date=invalid"
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=02-01-2050")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "first_name=John")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "last_name=Smith")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=john.Smith@gmail.com")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=555546465")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "room_id=1")
-//
-//	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
-//	ctx = getCtx(req)
-//	req = req.WithContext(ctx)
-//	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-//
-//	rr = httptest.NewRecorder()
-//
-//	handler = http.HandlerFunc(Repo.PostReservation)
-//	//now we can call the handler
-//	handler.ServeHTTP(rr, req)
-//
-//	if rr.Code != http.StatusTemporaryRedirect {
-//		t.Errorf("PostReservation handler returned wrong response code for invalid start date: got %d, wanted %d", rr.Code, http.StatusTemporaryRedirect)
-//	}
-//
-//	// --------------------------------------------------------
-//	// test for invalid end date
-//	// create a POST request with invalid end date
-//	// we need to construct the body - a string - we're appending every field in the form
-//	reqBody = "start_date=02-01-2050"
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=invalid")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "first_name=John")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "last_name=Smith")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=john.Smith@gmail.com")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=555546465")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "room_id=1")
-//
-//	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
-//	ctx = getCtx(req)
-//	req = req.WithContext(ctx)
-//	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-//
-//	rr = httptest.NewRecorder()
-//
-//	handler = http.HandlerFunc(Repo.PostReservation)
-//	//now we can call the handler
-//	handler.ServeHTTP(rr, req)
-//
-//	if rr.Code != http.StatusTemporaryRedirect {
-//		t.Errorf("PostReservation handler returned wrong response code for invalid end date: got %d, wanted %d", rr.Code, http.StatusTemporaryRedirect)
-//	}
-//
-//	// --------------------------------------------------------
-//	// test for invalid end date
-//	// create a POST request with invalid room id
-//	// we need to construct the body - a string - we're appending every field in the form
-//	reqBody = "start_date=01-01-2050"
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=02-01-2050")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "first_name=John")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "last_name=Smith")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=john.Smith@gmail.com")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=555546465")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "room_id=invalid")
-//
-//	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
-//	ctx = getCtx(req)
-//	req = req.WithContext(ctx)
-//	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-//
-//	rr = httptest.NewRecorder()
-//
-//	handler = http.HandlerFunc(Repo.PostReservation)
-//	//now we can call the handler
-//	handler.ServeHTTP(rr, req)
-//
-//	if rr.Code != http.StatusTemporaryRedirect {
-//		t.Errorf("PostReservation handler returned wrong response code for invalid room ID: got %d, wanted %d", rr.Code, http.StatusTemporaryRedirect)
-//	}
-//
-//	// --------------------------------------------------------
-//	// test for invalid data
-//	// create a POST request with invalid first name - fails validation
-//	// we need to construct the body - a string - we're appending every field in the form
-//	reqBody = "start_date=01-01-2050"
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=02-01-2050")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "first_name=J")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "last_name=Smith")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=john.Smith@gmail.com")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=555546465")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "room_id=1")
-//
-//	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
-//	ctx = getCtx(req)
-//	req = req.WithContext(ctx)
-//	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-//
-//	rr = httptest.NewRecorder()
-//
-//	handler = http.HandlerFunc(Repo.PostReservation)
-//	//now we can call the handler
-//	handler.ServeHTTP(rr, req)
-//
-//	if rr.Code != http.StatusSeeOther {
-//		t.Errorf("PostReservation handler returned wrong response code for invalid data: got %d, wanted %d", rr.Code, http.StatusSeeOther)
-//	}
-//
-//	// --------------------------------------------------------
-//	// test for failure to insert reservation in database
-//	// create a POST request with room id 2 - failing reservation insert
-//	// we need to construct the body - a string - we're appending every field in the form
-//	reqBody = "start_date=01-01-2050"
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=02-01-2050")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "first_name=John")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "last_name=Smith")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=john.Smith@gmail.com")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=555546465")
-//	// this is gonna fail the test - it's set in test-repo
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "room_id=2")
-//
-//	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
-//	ctx = getCtx(req)
-//	req = req.WithContext(ctx)
-//	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-//
-//	rr = httptest.NewRecorder()
-//
-//	handler = http.HandlerFunc(Repo.PostReservation)
-//	//now we can call the handler
-//	handler.ServeHTTP(rr, req)
-//
-//	if rr.Code != http.StatusTemporaryRedirect {
-//		t.Errorf("PostReservation handler failed when trying to fail inserting reservation: got %d, wanted %d", rr.Code, http.StatusTemporaryRedirect)
-//	}
-//
-//	// --------------------------------------------------------
-//	// test for failure to insert room restriction in database
-//	// create a POST request with room id 1000
-//	reqBody = "start_date=01-01-2050"
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=02-01-2050")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "first_name=John")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "last_name=Smith")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=john.Smith@gmail.com")
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=555546465")
-//	// this is gonna fail the test - it's set in test-repo
-//	reqBody = fmt.Sprintf("%s&%s", reqBody, "room_id=1000")
-//
-//	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
-//	ctx = getCtx(req)
-//	req = req.WithContext(ctx)
-//	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-//
-//	rr = httptest.NewRecorder()
-//
-//	handler = http.HandlerFunc(Repo.PostReservation)
-//	//now we can call the handler
-//	handler.ServeHTTP(rr, req)
-//
-//	if rr.Code != http.StatusTemporaryRedirect {
-//		t.Errorf("PostReservation handler failed when trying to fail inserting restriction: got %d, wanted %d", rr.Code, http.StatusTemporaryRedirect)
-//	}
+//var availabilityJSON = []struct {
+//	name      string
+//	roomID    string
+//	startDate string
+//	endDate   string
+//	expected  bool
+//}{
+//	{
+//		name:      "Can not parse form",
+//		roomID:    "1",
+//		startDate: "01-01-2050",
+//		endDate:   "02-01-2050",
+//		expected:  false,
+//	},
+//	{
+//		name:      "room_available",
+//		roomID:    "1",
+//		startDate: "01-01-2050",
+//		endDate:   "02-01-2050",
+//		expected:  false, // Assuming default test repo returns false for availability
+//	},
+//	{
+//		name:      "room_not_available",
+//		roomID:    "2", // Assuming this room ID will trigger a "not available" scenario in the test repo
+//		startDate: "01-01-2050",
+//		endDate:   "02-01-2050",
+//		expected:  false,
+//	},
+//	{
+//		name:      "invalid_room_id",
+//		roomID:    "invalid",
+//		startDate: "01-01-2050",
+//		endDate:   "02-01-2050",
+//		expected:  false,
+//	},
+//	{
+//		name:      "invalid_start_date",
+//		roomID:    "1",
+//		startDate: "invalid",
+//		endDate:   "02-01-2050",
+//		expected:  false,
+//	},
+//	{
+//		name:      "invalid_end_date",
+//		roomID:    "1",
+//		startDate: "01-01-2050",
+//		endDate:   "invalid",
+//		expected:  false,
+//	},
 //}
-
-var availabilityJSON = []struct {
-	name      string
-	roomID    string
-	startDate string
-	endDate   string
-	expected  bool
-}{
-	//{
-	//	name:      "Can not parse form",
-	//	roomID:    "1",
-	//	startDate: "01-01-2050",
-	//	endDate:   "02-01-2050",
-	//	expected:  false,
-	//},
-	//{
-	//	name:      "room_available",
-	//	roomID:    "1",
-	//	startDate: "01-01-2050",
-	//	endDate:   "02-01-2050",
-	//	expected:  false, // Assuming default test repo returns false for availability
-	//},
-	//{
-	//	name:      "room_not_available",
-	//	roomID:    "2", // Assuming this room ID will trigger a "not available" scenario in the test repo
-	//	startDate: "01-01-2050",
-	//	endDate:   "02-01-2050",
-	//	expected:  false,
-	//},
-	//{
-	//	name:      "invalid_room_id",
-	//	roomID:    "invalid",
-	//	startDate: "01-01-2050",
-	//	endDate:   "02-01-2050",
-	//	expected:  false,
-	//},
-	//{
-	//	name:      "invalid_start_date",
-	//	roomID:    "1",
-	//	startDate: "invalid",
-	//	endDate:   "02-01-2050",
-	//	expected:  false,
-	//},
-	//{
-	//	name:      "invalid_end_date",
-	//	roomID:    "1",
-	//	startDate: "01-01-2050",
-	//	endDate:   "invalid",
-	//	expected:  false,
-	//},
-}
 
 // test is not finished
 //func TestRepository_AvailabilityJSON(t *testing.T) {
@@ -446,14 +464,14 @@ var availabilityJSON = []struct {
 //			var j jsonResponse
 //			fmt.Println(j)
 //			// we need to put what is server sending back to me into JSON
-//			err := json.Unmarshal([]byte(rr.Body.String()), &j) //what was sent back and put in variable j
-//			if err != nil {
-//				t.Error("failed to parse json")
-//			}
+//			//err := json.Unmarshal([]byte(rr.Body.String()), &j) //what was sent back and put in variable j
+//			//if err != nil {
+//			//	t.Error("failed to parse json")
+//			//}
 //		})
 //	}
 //}
-
+//
 //func TestRepository_AvailabilityJSON2(t *testing.T) {
 //	//rooms are not available
 //	reqBody := "start=01-01-2050"
@@ -483,6 +501,83 @@ var availabilityJSON = []struct {
 //	}
 //
 //}
+
+var loginTest = []struct {
+	name               string
+	email              string
+	expectedStatusCode int
+	expectedHTML       string
+	expectedLocation   string
+}{
+	{
+		"valid credentials",
+		"valid@email.com",
+		http.StatusSeeOther,
+		"",
+		"/",
+	}, {
+		// we need to adjust this in test-repo
+		"invalid credentials",
+		"invalid@email.com",
+		http.StatusSeeOther,
+		"",
+		"/user/login",
+	}, {
+		// data are not in the correct format
+		// data are not rendered, but user is sent to homepage that is including `action="user/login"` text
+		"invalid data",
+		"j",
+		http.StatusOK,
+		`action="/user/login"`,
+		"",
+	},
+}
+
+func TestLogin(t *testing.T) {
+	//range through all tests
+	for _, e := range loginTest {
+		postedData := url.Values{}
+		postedData.Add("email", e.email)
+		postedData.Add("password", "password")
+
+		//create request
+		req, _ := http.NewRequest("POST", "/user/login", strings.NewReader(postedData.Encode()))
+		ctx := getCtx(req)
+		req = req.WithContext(ctx)
+
+		//set the header
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		rr := httptest.NewRecorder()
+
+		//call the handler
+		handler := http.HandlerFunc(Repo.PostShowLogin)
+		handler.ServeHTTP(rr, req)
+
+		if rr.Code != e.expectedStatusCode {
+			t.Errorf("failed %s: expected code %d, but got %d", e.name, e.expectedStatusCode, rr.Code)
+		}
+
+		// only checking if test has location
+		if e.expectedLocation != "" {
+			//get tge URL from the test
+			actualLoc, _ := rr.Result().Location()
+			if actualLoc.String() != e.expectedLocation {
+				t.Errorf("failed %s: expected location %s, but got location %s", e.name, e.expectedLocation, actualLoc.String())
+			}
+		}
+
+		// only checking if test has HTML
+		//checking for expected values in HTML
+		if e.expectedHTML != "" {
+			//read the response body into a string
+			html := rr.Body.String()
+			//checking that section exist
+			if !strings.Contains(html, e.expectedHTML) {
+				t.Errorf("failed %s: expected to find %s, but did not", e.name, e.expectedHTML)
+			}
+		}
+	}
+}
 
 func getCtx(req *http.Request) context.Context {
 	//we're getting header X-Session that we need later!
