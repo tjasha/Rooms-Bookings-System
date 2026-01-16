@@ -87,8 +87,8 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 	m.App.Session.Put(r.Context(), "reservation", res)
 
 	// we need to change dates from time.Time to displayable date
-	sd := res.StartDate.Format("02-01-2006")
-	ed := res.EndDate.Format("02-01-2006")
+	sd := res.StartDate.Format("02.01.2006")
+	ed := res.EndDate.Format("02.01.2006")
 	//adding dates in the map
 	stringMap := make(map[string]string)
 	stringMap["start_date"] = sd
@@ -113,6 +113,14 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
+
+	// we need to change dates from time.Time to displayable date
+	sd := reservation.StartDate.Format("02.01.2006")
+	ed := reservation.EndDate.Format("02.01.2006")
+	//adding dates in the map
+	stringMap := make(map[string]string)
+	stringMap["start_date"] = sd
+	stringMap["end_date"] = ed
 
 	err := r.ParseForm()
 	if err != nil {
@@ -141,8 +149,9 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		//http.Error(w, "Validation did not pass", http.StatusSeeOther)
 		//saved data that user wrote
 		render.Template(w, r, "make-reservation.page.tmpl", &models.TemplateData{
-			Form: form,
-			Data: data,
+			Form:      form,
+			Data:      data,
+			StringMap: stringMap,
 		})
 		return
 	}
@@ -386,8 +395,8 @@ func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) 
 	data := make(map[string]interface{})
 	data["reservation"] = reservation
 
-	sd := reservation.StartDate.Format("02-01-2006")
-	ed := reservation.EndDate.Format("02-01-2006")
+	sd := reservation.StartDate.Format("02.01.2006")
+	ed := reservation.EndDate.Format("02.01.2006")
 	stringMap := make(map[string]string)
 	stringMap["start_date"] = sd
 	stringMap["end_date"] = ed
