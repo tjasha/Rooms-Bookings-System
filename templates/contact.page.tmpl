@@ -2,14 +2,79 @@
 
 {{define "content"}}
 
-<div class="container mt-2">
-    <div class="row">
-        <div class="col">
-            <h1>This is the contact page</h1>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+        color: #333;
+    }
+
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        max-width: 1000px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    .contact-info, .map {
+        flex: 1 1 400px;
+        padding: 20px;
+    }
+
+    .contact-info h2 {
+        margin-top: 0;
+        color: #2c3e50;
+    }
+
+    .contact-info p {
+        line-height: 1.6;
+    }
+
+    .map iframe {
+        width: 100%;
+        height: 300px;
+        border: 0;
+        border-radius: 10px;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            flex-direction: column;
+        }
+
+        .map iframe {
+            height: 250px;
+        }
+    }
+</style>
 
 
-        </div>
+<body>
+
+<div class="container">
+    <div class="contact-info">
+        <h2>Contact Us</h2>
+        <p><strong>Forth Smythe Bed & Breakfast</strong></p>
+        <p>123 Maple Lane<br>
+            Ontario, Canada<br>
+            Postal Code A1B 2C3</p>
+        <p><strong>Phone:</strong> +1 (555) 123-4567<br>
+            <strong>Email:</strong> info@forthsmythebnb.ca</p>
+    </div>
+    <div class="map">
+        <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2886.123456789012!2d-79.3832!3d43.6532!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xabcdef1234567890!2sForth+Smythe+B%26B!5e0!3m2!1sen!2sca!4v1234567890123"
+                allowfullscreen=""
+                loading="lazy">
+        </iframe>
     </div>
 </div>
+</body>
 
 {{end}}

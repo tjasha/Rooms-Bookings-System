@@ -16,7 +16,7 @@
                 This field always have to be present, but it can be hidden.
                 This token is changed every time that you post the form - it makes it safe! -->
                 <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
-                <div class="form-row" id="reservation-dates">
+                <div class="row" id="reservation-dates">
                     <div class="col">
                         <label>
                             <input class="form-control" type="text" name="start" placeholder="Arrival" required>
@@ -29,7 +29,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Search availability</button>
+                <button type="submit" class="btn btn-primary mt-3 align-items-end">Search availability</button>
             </form>
         </div>
     </div>

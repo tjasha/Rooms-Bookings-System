@@ -12,7 +12,9 @@
             <ul>
 
             {{range $rooms}}
+                <button>
                 <li><a href="/choose-room/{{.ID}}">{{.RoomName}}<br></li>
+                </button>
             {{end}}
             </ul>
         </div>
