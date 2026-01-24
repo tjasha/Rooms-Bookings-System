@@ -491,7 +491,7 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseForm()
 	if err != nil {
-		log.Println(err)
+		log.Println("Cannot parse form", err)
 	}
 
 	email := r.Form.Get("email")
@@ -512,7 +512,7 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 	// try to authenticate the user
 	id, _, err := m.DB.Authenticate(email, password)
 	if err != nil {
-		log.Println(err)
+		log.Println("Authentication failed", err)
 		// if there is an error,i want to send user back to the log in form
 		m.App.Session.Put(r.Context(), "error", "Invalid login credentials")
 		http.Redirect(w, r, "/user/login", http.StatusSeeOther)
@@ -679,7 +679,7 @@ func (m *Repository) AdminProcessReservation(w http.ResponseWriter, r *http.Requ
 	// update as processed - value 1
 	err := m.DB.UpdateProcessedForReservation(id, 1)
 	if err != nil {
-		log.Println(err)
+		log.Println("reservation cannot be updated", err)
 	}
 
 	month := r.URL.Query().Get("m")
@@ -699,27 +699,23 @@ func (m *Repository) AdminProcessReservation(w http.ResponseWriter, r *http.Requ
 // AdminProcessReservation marks a reservation as processed
 func (m *Repository) AdminDeleteReservation(w http.ResponseWriter, r *http.Request) {
 
-	log.Println("URL:", r.URL)
-
 	id, _ := strconv.Atoi(chi.URLParam(r, "id"))
 	src := chi.URLParam(r, "src")
 
 	// delete reservation with id
 	err := m.DB.DeleteReservation(id)
 	if err != nil {
-		log.Println(err)
+		log.Println("Reservation cannot be deleted", err)
 	}
 
 	month := r.URL.Query().Get("m")
 	year := r.URL.Query().Get("y")
-	log.Println("GET YRL ", month, ".", year)
 
 	// notify user that it's deleted
 	m.App.Session.Put(r.Context(), "flash", "Reservation deleted")
 
 	if year == "" {
 		// redirect to the same page as they came from
-		log.Println("no year")
 		http.Redirect(w, r, fmt.Sprintf("/admin/reservations-%s", src), http.StatusSeeOther)
 	} else {
 		http.Redirect(w, r, fmt.Sprintf("/admin/reservations-calendar?y=%s&m=%s", year, month), http.StatusSeeOther)
@@ -876,7 +872,7 @@ func (m *Repository) AdminPostReservationsCalendar(w http.ResponseWriter, r *htt
 						log.Println("would delete block", value)
 						err := m.DB.DeleteBlockByID(value)
 						if err != nil {
-							log.Println(err)
+							log.Println("Restriction cannot be deleted", err)
 						}
 					}
 
