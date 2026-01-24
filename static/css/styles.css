@@ -1,5 +1,5 @@
 .my-footer {
-    height: 5em;
+    /*height: 9em;*/
     background-color: #163b65;
     margin-top: 1.5em;
     padding: 1em;
@@ -17,4 +17,14 @@
 
 .datepicker {
     z-index: 100000;
+}
+
+.carousel-item {
+    height: 500px;
+}
+
+.carousel-item img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
 }

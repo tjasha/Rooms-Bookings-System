@@ -4,11 +4,13 @@ function checkAvailability(roomId, csrfToken) {
         <div class="form-row">
             <div class="col">
                 <div class="form-row" id="reservation-dates-modal">
-                    <div class="col">
-                        <input disabled required class="form-control" type="text" name="start" id="start" placeholder="Arrival">
+                    <div class="col mt-2">
+                        <input disabled required class="form-control" type="text" name="start" id="start" 
+                        placeholder="Arrival" autocomplete="off">
                     </div>
-                    <div class="col">
-                        <input disabled required class="form-control" type="text" name="end" id="end" placeholder="Departure">
+                    <div class="col mt-2">
+                        <input disabled required class="form-control" type="text" name="end" id="end" 
+                        placeholder="Departure" autocomplete="off">
                     </div>
 
                 </div>
